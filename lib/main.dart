@@ -1,31 +1,34 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shopbansach/presentation/bloc/auth_bloc.dart';
+import 'package:shopbansach/presentation/bloc/auth_event.dart';
+import 'package:shopbansach/presentation/bloc/auth_state.dart';
 import 'package:shopbansach/presentation/screens/auth/auth_screen.dart';
 import 'package:shopbansach/presentation/screens/chatbot_rasa_ai/chatbot_rasa_ai.dart';
 import 'package:shopbansach/presentation/screens/splash_screen.dart';
 
+import 'data/clients/auth_client.dart';
+import 'data/clients/user_db_client.dart';
 import 'data/datasources/auth_local_data_source.dart';
-import 'data/datasources/auth_remote_data_source.dart';
 import 'data/repositories/auth_repository_impl.dart';
+import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/login_usecase.dart';
-import 'domain/usecases/signup_usecase.dart';
 import 'domain/usecases/logout_usecase.dart';
+import 'domain/usecases/signup_usecase.dart';
 import 'domain/usecases/try_auto_login_usecase.dart';
-import 'presentation/bloc/auth_bloc.dart';
-import 'presentation/bloc/auth_event.dart';
-import 'presentation/bloc/auth_state.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // CHÚ Ý: Load file .env ở đây
+
   await dotenv.load(fileName: ".env");
 
   final sharedPreferences = await SharedPreferences.getInstance();
+
   runApp(MyApp(sharedPreferences: sharedPreferences));
 }
-
 class MyApp extends StatelessWidget {
   final SharedPreferences sharedPreferences;
 
@@ -33,22 +36,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Khởi tạo các Dependencies theo Clean Architecture
-    final authRemoteDataSource = AuthRemoteDataSourceImpl(client: http.Client());
+    // 1. Khởi tạo Dio
+    final dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 15)));
+
+    // 2. Khởi tạo Clients
+    final authClient = AuthClient(dio);
+    final userDbClient = UserDbClient(dio);
+
+    // 3. Khởi tạo Local Storage
     final authLocalDataSource = AuthLocalDataSourceImpl(sharedPreferences: sharedPreferences);
+
+    // 4. Khởi tạo Repositories
     final authRepository = AuthRepositoryImpl(
-      remoteDataSource: authRemoteDataSource,
+      authClient: authClient,
       localDataSource: authLocalDataSource,
     );
+    final userRepository = UserRepositoryImpl(
+      userDbClient: userDbClient,
+    );
+
+    // 5. Khởi tạo UseCases & BLoC
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) => AuthBloc(
-            loginUseCase: LoginUseCase(authRepository),
-            signupUseCase: SignupUseCase(authRepository),
+            loginUseCase: LoginUseCase(
+                authRepository: authRepository,
+                userRepository: userRepository
+            ),
+            signupUseCase: SignupUseCase(
+                authRepository: authRepository,
+                userRepository: userRepository
+            ),
             logoutUseCase: LogoutUseCase(authRepository),
             tryAutoLoginUseCase: TryAutoLoginUseCase(authRepository),
-          )..add(AppStarted()), // Bắn event ngay khi mở app để check auto-login
+          )..add(AppStarted()),
         ),
       ],
       child: MaterialApp(
@@ -90,7 +112,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late int index = 0;
+  int index = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

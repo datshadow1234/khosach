@@ -1,34 +1,52 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../domain/entities/auth_token_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../clients/auth_client.dart';
 import '../datasources/auth_local_data_source.dart';
-import '../datasources/auth_remote_data_source.dart';
-import '../models/auth_token_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource remoteDataSource;
+  final AuthClient authClient;
   final AuthLocalDataSource localDataSource;
+  final String _apiKey = dotenv.env['FIREBASE_API_KEY'] ?? '';
 
   AuthRepositoryImpl({
-    required this.remoteDataSource,
+    required this.authClient,
     required this.localDataSource,
   });
 
   @override
   Future<AuthTokenEntity> login(String email, String password) async {
-    final authTokenModel = await remoteDataSource.authenticate(email, password, 'signInWithPassword');
-    final role = await remoteDataSource.isAdmin(authTokenModel.token, authTokenModel.userId);
-    final updatedAuthToken = authTokenModel.copyWith(role: role);
-    await localDataSource.saveAuthToken(updatedAuthToken);
-    return updatedAuthToken;
+    final response = await authClient.signIn(_apiKey, {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true,
+    });
+
+    return AuthTokenEntity(
+      token: response.token,
+      userId: response.userId,
+      expiryDate: DateTime.now().add(Duration(seconds: int.parse(response.expiresIn))),
+    );
   }
 
   @override
-  Future<AuthTokenEntity> signup(String email, String password, String phone, String name, String address) async {
-    final authTokenModel = await remoteDataSource.authenticate(email, password, 'signUp', phone, name, address);
-    final role = await remoteDataSource.isAdmin(authTokenModel.token, authTokenModel.userId);
-    final updatedAuthToken = authTokenModel.copyWith(role: role);
-    await localDataSource.saveAuthToken(updatedAuthToken);
-    return updatedAuthToken;
+  Future<AuthTokenEntity> signup(String email, String password) async {
+    final response = await authClient.signUp(_apiKey, {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true,
+    });
+
+    return AuthTokenEntity(
+      token: response.token,
+      userId: response.userId,
+      expiryDate: DateTime.now().add(Duration(seconds: int.parse(response.expiresIn))),
+    );
+  }
+
+  @override
+  Future<void> saveLocalToken(AuthTokenEntity entity) async {
+    await localDataSource.saveAuthToken(entity);
   }
 
   @override

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/auth_token_model.dart';
+import '../../domain/entities/auth_token_entity.dart';
 
 abstract class AuthLocalDataSource {
-  Future<void> saveAuthToken(AuthTokenModel authToken);
-  Future<AuthTokenModel?> getAuthToken();
+  Future<void> saveAuthToken(AuthTokenEntity entity);
+  Future<AuthTokenEntity?> getAuthToken();
   Future<void> clearAuthToken();
 }
 
@@ -15,18 +15,27 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   AuthLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
-  Future<void> saveAuthToken(AuthTokenModel authToken) async {
-    await sharedPreferences.setString(
-      _authTokenKey,
-      json.encode(authToken.toJson()),
-    );
+  Future<void> saveAuthToken(AuthTokenEntity entity) async {
+    final Map<String, dynamic> jsonMap = {
+      'token': entity.token,
+      'userId': entity.userId,
+      'expiryDate': entity.expiryDate.toIso8601String(),
+      'role': entity.role,
+    };
+    await sharedPreferences.setString(_authTokenKey, json.encode(jsonMap));
   }
 
   @override
-  Future<AuthTokenModel?> getAuthToken() async {
+  Future<AuthTokenEntity?> getAuthToken() async {
     final jsonString = sharedPreferences.getString(_authTokenKey);
     if (jsonString != null) {
-      return AuthTokenModel.fromJson(json.decode(jsonString));
+      final jsonMap = json.decode(jsonString);
+      return AuthTokenEntity(
+        token: jsonMap['token'] ?? '',
+        userId: jsonMap['userId'] ?? '',
+        expiryDate: DateTime.parse(jsonMap['expiryDate']),
+        role: jsonMap['role'] ?? 'user',
+      );
     }
     return null;
   }
