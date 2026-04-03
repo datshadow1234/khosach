@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '/presentation/bloc/auth_bloc.dart';
-import '/presentation/bloc/auth_event.dart';
-import '/presentation/bloc/auth_state.dart';
+import '../../bloc/auth/auth_bloc.dart';
+import '../../bloc/auth/auth_state.dart';
+import '../../bloc/auth/auth_event.dart';
+import '../../bloc/login/login_bloc.dart';
+import '../../bloc/login/login_event.dart';
+import '../../bloc/login/login_state.dart';
+import '../../bloc/signup/signup_bloc.dart';
+import '../../bloc/signup/signup_event.dart';
+import '../../bloc/signup/signup_state.dart';
 import '../shared/dialog_utils.dart';
 
 enum AuthMode { signup, login }
@@ -36,20 +42,18 @@ class _AuthCardState extends State<AuthCard> {
     _formKey.currentState!.save();
 
     if (_authMode == AuthMode.login) {
-      context.read<AuthBloc>().add(
-            LoginSubmitted(
-              email: _authData['email']!,
-              password: _authData['password']!,
-            ),
-          );
+      context.read<LoginBloc>().add(
+          LoginSubmitted(
+              _authData['email']!,
+              _authData['password']!));
     } else {
-      context.read<AuthBloc>().add(
+      context.read<SignupBloc>().add(
             SignupSubmitted(
-              email: _authData['email']!,
-              password: _authData['password']!,
-              phone: _authData['phone']!,
-              name: _authData['name']!,
-              address: _authData['address']!,
+              _authData['email']!,
+              _authData['password']!,
+              _authData['phone']!,
+              _authData['name']!,
+              _authData['address']!,
             ),
           );
     }
@@ -64,12 +68,21 @@ class _AuthCardState extends State<AuthCard> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthFailure) {
-          showErrorDialog(context, state.message);
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LoginBloc, LoginState>(
+          listener: (context, state) {
+            if (state is LoginFailure) showErrorDialog(context, state.message);
+            else if (state is LoginSuccess) context.read<AuthBloc>().add(AuthLoggedIn(authToken: state.authToken));
+          },
+        ),
+        BlocListener<SignupBloc, SignupState>(
+          listener: (context, state) {
+            if (state is SignupFailure) showErrorDialog(context, state.message);
+            else if (state is SignupSuccess) context.read<AuthBloc>().add(AuthLoggedIn(authToken: state.authToken));
+          },
+        ),
+      ],
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -91,15 +104,17 @@ class _AuthCardState extends State<AuthCard> {
                     _buildNameField(),
                     _buildAddressField(),
                   ],
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      if (state is AuthLoading) {
-                        return const CircularProgressIndicator();
-                      }
-                      return _buildSubmitButton();
+                  const SizedBox(height: 20),
+                  BlocBuilder<LoginBloc, LoginState>(
+                    builder: (context, loginState) {
+                      return BlocBuilder<SignupBloc, SignupState>(
+                        builder: (context, signupState) {
+                          if (loginState is LoginLoading || signupState is SignupLoading) {
+                            return const CircularProgressIndicator();
+                          }
+                          return _buildSubmitButton();
+                        },
+                      );
                     },
                   ),
                   _buildAuthModeSwitchButton(),

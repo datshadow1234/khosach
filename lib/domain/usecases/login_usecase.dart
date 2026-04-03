@@ -1,21 +1,15 @@
 import '../entities/auth_token_entity.dart';
-import '../repositories/auth_repository.dart';
-import '../repositories/user_repository.dart';
+import '../repositories/login_repository.dart';
 
 class LoginUseCase {
-  final AuthRepository authRepository;
-  final UserRepository userRepository;
+  final LoginRepository repository;
 
-  LoginUseCase({required this.authRepository, required this.userRepository});
+  LoginUseCase({required this.repository});
 
   Future<AuthTokenEntity> call(String email, String password) async {
-    // 1. Lấy Token từ Auth Repo
-    final baseEntity = await authRepository.login(email, password);
+    final baseEntity = await repository.signIn(email, password);
+    final role = await repository.getUserRole(baseEntity.userId, baseEntity.token);
 
-    // 2. Lấy Role từ User Repo
-    final role = await userRepository.getUserRole(baseEntity.userId, baseEntity.token);
-
-    // 3. Gộp lại
     final finalEntity = AuthTokenEntity(
       token: baseEntity.token,
       userId: baseEntity.userId,
@@ -23,8 +17,7 @@ class LoginUseCase {
       role: role,
     );
 
-    // 4. Lưu Local
-    await authRepository.saveLocalToken(finalEntity);
+    await repository.saveLocalToken(finalEntity);
 
     return finalEntity;
   }

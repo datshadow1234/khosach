@@ -1,23 +1,24 @@
 import '../entities/auth_token_entity.dart';
-import '../repositories/auth_repository.dart';
-import '../repositories/user_repository.dart';
+import '../repositories/signup_repository.dart';
 
 class SignupUseCase {
-  final AuthRepository authRepository;
-  final UserRepository userRepository;
+  final SignupRepository repository;
 
-  SignupUseCase({required this.authRepository, required this.userRepository});
+  SignupUseCase({required this.repository});
 
   Future<AuthTokenEntity> call(
       String email, String password, String phone, String name, String address,
       ) async {
-    // 1. Đăng ký qua Auth Repo
-    final baseEntity = await authRepository.signup(email, password);
+    final baseEntity = await repository.signUp(email, password);
+    await repository.createUserInfo(baseEntity.userId, baseEntity.token, {
+      'uid': baseEntity.userId,
+      'email': email,
+      'name': name,
+      'phone': phone,
+      'address': address,
+      'role': 'user',
+    });
 
-    // 2. Tạo profile User qua User Repo
-    await userRepository.createUser(baseEntity.userId, baseEntity.token, email, phone, name, address);
-
-    // Mặc định tạo mới là user
     final finalEntity = AuthTokenEntity(
       token: baseEntity.token,
       userId: baseEntity.userId,
@@ -25,8 +26,7 @@ class SignupUseCase {
       role: 'user',
     );
 
-    // 3. Lưu Local
-    await authRepository.saveLocalToken(finalEntity);
+    await repository.saveLocalToken(finalEntity);
 
     return finalEntity;
   }
