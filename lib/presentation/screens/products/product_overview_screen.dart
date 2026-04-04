@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../bloc/product_list/product_list_bloc.dart';
-import '../../bloc/product_list/product_list_event.dart';
-import '../../bloc/product_list/product_list_state.dart';
+import '../../../core/theme/theme_cubit.dart';
+import '../../bloc/product_list_bloc/product_list_bloc.dart';
+import '../../bloc/product_list_bloc/product_list_event.dart';
+import '../../bloc/product_list_bloc/product_list_state.dart';
 import 'products_grid.dart';
 import 'search_product.dart';
 
@@ -26,7 +26,13 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('BOOKSTORE'),
-        actions: [searchProduct()],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+          ),
+          searchProduct(),
+        ],
       ),
       body: BlocBuilder<ProductListBloc, ProductListState>(
         builder: (context, state) {

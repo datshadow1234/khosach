@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:shopbansach/presentation/bloc/product_list_bloc/product_list_event.dart';
+import 'package:shopbansach/presentation/bloc/product_list_bloc/product_list_state.dart';
 import '../../../domain/usecases/get_products_usecase.dart';
 import '../../../domain/usecases/search_products_usecase.dart';
-import '../product_list/product_list_event.dart';
-import '../product_list/product_list_state.dart';
+
 class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   final GetProductsUseCase getProductsUseCase;
   final SearchProductsUseCase searchProductsUseCase;

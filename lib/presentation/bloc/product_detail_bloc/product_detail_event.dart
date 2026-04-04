@@ -1,7 +1,7 @@
-import '../../../domain/entities/product_entity.dart';
-
 abstract class ProductDetailEvent {}
+
 class LoadProductDetailEvent extends ProductDetailEvent {
-  final ProductEntity product;
+  final dynamic product;
+
   LoadProductDetailEvent(this.product);
 }
