@@ -9,7 +9,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  intl: ^0.18.0
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0
   bubble:
   provider: ^6.0.3
   flutter_dotenv: ^5.0.2
@@ -37,6 +39,7 @@ flutter:
   assets:
     - .env
     - assets/Images/
+  generate: true
   # fonts:
   # - family: Lato
   #   fonts:
@@ -46,6 +49,5 @@ flutter:
   # - family: Anton
   #   fonts:
   #     - asset: assets/fonts/Anton-Regular.ttf
-
 dependency_overrides:
   win32: ^5.5.4

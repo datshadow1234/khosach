@@ -1,0 +1,23 @@
+{
+  "appTitle": "Book Store",
+  "cart": "Cart",
+  "total": "TOTAL",
+  "emptyCart": "Your cart is empty!",
+  "vietnamese": "Vietnamese (VI)",
+  "english": "English (EN)",
+  "productDetail": "Product Detail",
+  "author": "Author",
+  "country": "Country",
+  "category": "Category",
+  "price": "Price",
+  "addToCart": "Add:",
+  "orderNow": "Order Now",
+  "description": "Description",
+  "addedToCart": "Added to cart!",
+  "undo": "Undo",
+  "orders": "Orders",
+  "profile": "Profile",
+  "home": "Home",
+  "startAdding": "Start adding some products!",
+  "checkout": "CHECKOUT"
+}

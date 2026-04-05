@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/Language/language_cubit.dart';
 import '../../../core/theme/theme_cubit.dart';
+import '../../bloc/logout_bloc/logout_bloc.dart';
+import '../../bloc/logout_bloc/logout_event.dart';
 import '../../bloc/product_list_bloc/product_list_bloc.dart';
 import '../../bloc/product_list_bloc/product_list_event.dart';
 import '../../bloc/product_list_bloc/product_list_state.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'products_grid.dart';
 import 'search_product.dart';
 
@@ -23,15 +27,36 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BOOKSTORE'),
+        title: Text(l10n.appTitle),
         actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.language),
+            onSelected: (String langCode) {
+              context.read<LanguageCubit>().changeLanguage(langCode);
+            },
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(value: 'vi', child: Text(l10n.vietnamese)),
+              PopupMenuItem(value: 'en', child: Text(l10n.english)),
+            ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SearchScreen()),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.brightness_6),
             onPressed: () => context.read<ThemeCubit>().toggleTheme(),
           ),
-          searchProduct(),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => context.read<LogoutBloc>().add(LogoutSubmitted()),
+          )
         ],
       ),
       body: BlocBuilder<ProductListBloc, ProductListState>(

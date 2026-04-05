@@ -1,289 +1,178 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../domain/entities/product_entity.dart';
+import '../../../domain/entities/cart_item_entity.dart';
+import '../../bloc/cart_bloc/cart_bloc.dart';
+import '../../bloc/cart_bloc/cart_event.dart';
+
 class ProductDetailScreen extends StatelessWidget {
   static const routeName = '/product-detail';
-  const ProductDetailScreen(
-    this.product, {
-    super.key,
-  });
-
   final ProductEntity product;
+
+  const ProductDetailScreen(this.product, {super.key});
+  void _addToCart(BuildContext context, AppLocalizations l10n) {
+    final cartItem = _convertToCartItem();
+    context.read<CartBloc>().add(AddCartEvent(cartItem));
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(l10n.addedToCart),
+          duration: const Duration(seconds: 2),
+          action: SnackBarAction(
+            label: l10n.undo,
+            onPressed: () {
+              context.read<CartBloc>().add(RemoveCartEvent(product.id ?? ''));
+            },
+          ),
+        ),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chi tiết cây cảnh"),
+        title: Text(l10n.productDetail),
       ),
       body: SingleChildScrollView(
         child: Column(
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              const SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: Column(children: [
+          children: <Widget>[
+            const SizedBox(height: 20),
+            Container(
+              child: Column(
+                children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // const SizedBox(height: 20),
                       SizedBox(
                         height: 300,
                         width: 200,
-                        // width: double.infinity,
                         child: Image.network(
                           product.imageUrl,
                           fit: BoxFit.fitHeight,
                         ),
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           SizedBox(
                             width: 150,
-                            child: Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Tên sách',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      ),
-                                      Text(
-                                        '${product.title}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          color: Colors.red,
-                                          fontStyle: FontStyle.italic,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Chủ cửa hàng',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      ),
-                                      Text(
-                                        '${product.author}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Xuất xứ',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      ),
-                                      Text(
-                                        '${product.coutry}',
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Thể loại',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      ),
-                                      Text(
-                                        '${product.category}',
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Giá bán',
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 20),
-                                      ),
-                                      Text(
-                                        '${product.price}',
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  // buildShoppingCartIcon(),
-                                ],
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildInfo(l10n.appTitle, product.title,
+                                    valueColor: Colors.red, italic: true),
+                                _buildInfo(l10n.author, product.author),
+                                _buildInfo(l10n.country, product.coutry),
+                                _buildInfo(l10n.category, product.category),
+                                _buildInfo(l10n.price, "${product.price}"),
+                                buildShoppingCartIcon(context, l10n),
+                              ],
                             ),
-                          )
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
-                ]),
+                ],
               ),
-              // SizedBox(
-              //   height: 300,
-              //   width: double.infinity,
-              //   child: Image.network(
-              //     product.imageUrl,
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
-              // const SizedBox(height: 10),
-              // Text(
-              //   '${product.title}',
-              //   style: const TextStyle(
-              //     color: Colors.red,
-              //     fontStyle: FontStyle.italic,
-              //     fontSize: 30,
-              //   ),
-              // ),
-              // Text(
-              //   '${product.owner}',
-              //   style: const TextStyle(
-              //     color: Colors.black,
-              //     fontSize: 20,
-              //   ),
-              // ),
-              // Text(
-              //   '${product.origin}',
-              //   style: const TextStyle(
-              //     color: Colors.black,
-              //     fontSize: 20,
-              //   ),
-              // ),
-              // Text(
-              //   '${product.status}',
-              //   style: const TextStyle(
-              //     color: Colors.black,
-              //     fontSize: 20,
-              //   ),
-              // ),
-              // Text(
-              //   '${product.price}',
-              //   style: const TextStyle(
-              //     color: Colors.grey,
-              //     fontSize: 20,
-              //   ),
-              // ),
-              // const SizedBox(height: 20),
-              // buildShoppingCartIcon(),
-              // Container(
-              //   width: 200,
-              //   height: 40,
-              //   child: ElevatedButton(
-              //     onPressed: () {
-              //       final cart = context.read<CartManager>();
-              //       cart.addItem(product);
-              //       Navigator.of(context)
-              //           .pushNamed(PaymentCartScreen1.routeName);
-              //     },
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.red,
-              //     ),
-              //     child: const Text('Đặt hàng',
-              //         style: TextStyle(
-              //           color: Colors.white,
-              //         )),
-              //   ),
-              // ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    const Text(
-                      'Mô tả sách',
-                      style: TextStyle(color: Colors.grey, fontSize: 20),
-                    ),
-                    Text(
-                      product.description,
-                      style: TextStyle(color: Colors.black, fontSize: 18),
-                      textAlign: TextAlign.start,
-                      softWrap: true,
-                    ),
-                  ],
+            ),
+            Container(
+              width: 200,
+              height: 40,
+              child: ElevatedButton(
+                onPressed: () => _addToCart(context, l10n),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
                 ),
-              )
-            ]),
+                child: Text(
+                  l10n.orderNow,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Text(
+                    l10n.description,
+                    style: const TextStyle(color: Colors.grey, fontSize: 20),
+                  ),
+                  Text(
+                    product.description,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.start,
+                    softWrap: true,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-//   Widget buildShoppingCartIcon() {
-//     return Consumer<CartManager>(
-//       builder: (context, cartManager, child) {
-//         return Container(
-//           child: Column(
-//             children: [
-//               Row(
-//                 children: [
-//                   const Text(
-//                     'Thêm:',
-//                     style: TextStyle(fontSize: 18),
-//                   ),
-//                   IconButton(
-//                       onPressed: () {
-//                         //them vao cart
-//                         final cart = context.read<CartManager>();
-//                         cart.addItem(product);
-//                         // cart.addCart(product.id, product.title, product.price, product.imageUrl, 1);
-//                         //thong bao
-//
-//                         ScaffoldMessenger.of(context)
-//                           ..hideCurrentSnackBar()
-//                           ..showSnackBar(SnackBar(
-//                             content: const Text('Đã thêm vào giỏ hàng!'),
-//                             duration: const Duration(seconds: 2),
-//                             action: SnackBarAction(
-//                               label: 'Xóa',
-//                               onPressed: () {
-//                                 cart.removeSingleItem(product.id!);
-//                               },
-//                             ),
-//                           ));
-//                       },
-//                       icon: const Icon(Icons.shopping_cart)),
-//                 ],
-//               )
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
+  Widget _buildInfo(String label, String value,
+      {Color valueColor = Colors.grey, bool italic = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(color: Colors.black, fontSize: 20),
+        ),
+        Text(
+          value,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: valueColor,
+            fontSize: 18,
+            fontStyle: italic ? FontStyle.italic : FontStyle.normal,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildShoppingCartIcon(BuildContext context, AppLocalizations l10n) {
+    return Row(
+      children: [
+        Text(
+          l10n.addToCart,
+          style: const TextStyle(fontSize: 18),
+        ),
+        IconButton(
+          onPressed: () => _addToCart(context, l10n),
+          icon: const Icon(Icons.shopping_cart),
+        ),
+      ],
+    );
+  }
+
+  CartItemEntity _convertToCartItem() {
+    return CartItemEntity(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      productId: product.id ?? '',
+      title: product.title,
+      quantity: 1,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      category: product.category,
+      author: product.author,
+      language: product.language,
+      country: product.coutry,
+    );
+  }
 }
