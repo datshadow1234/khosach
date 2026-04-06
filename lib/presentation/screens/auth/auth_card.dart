@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/auth_bloc/auth_bloc.dart';
-import '../../bloc/auth_bloc/auth_event.dart';
-import '../../bloc/login_bloc/login_bloc.dart';
-import '../../bloc/login_bloc/login_event.dart';
-import '../../bloc/login_bloc/login_state.dart';
-import '../../bloc/signup_bloc/signup_bloc.dart';
-import '../../bloc/signup_bloc/signup_event.dart';
-import '../../bloc/signup_bloc/signup_state.dart';
+import '../../blocs/auth_bloc/auth_bloc.dart';
+import '../../blocs/auth_bloc/auth_event.dart';
+import '../../blocs/login_bloc/login_bloc.dart';
+import '../../blocs/login_bloc/login_event.dart';
+import '../../blocs/login_bloc/login_state.dart';
+import '../../blocs/signup_bloc/signup_bloc.dart';
+import '../../blocs/signup_bloc/signup_event.dart';
+import '../../blocs/signup_bloc/signup_state.dart';
 import '../shared/dialog_utils.dart';
 
 enum AuthMode { signup, login }

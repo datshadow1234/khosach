@@ -6,13 +6,16 @@ abstract class AuthLocalDataSource {
   Future<void> saveAuthToken(AuthTokenEntity entity);
   Future<AuthTokenEntity?> getAuthToken();
   Future<void> clearAuthToken();
+  String? getUid();
+  String? getToken();
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   static const _authTokenKey = 'authToken';
   final SharedPreferences sharedPreferences;
-
-  AuthLocalDataSourceImpl({required this.sharedPreferences});
+  AuthLocalDataSourceImpl({
+    required this.sharedPreferences,
+  });
 
   @override
   Future<void> saveAuthToken(AuthTokenEntity entity) async {
@@ -22,7 +25,11 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       'expiryDate': entity.expiryDate.toIso8601String(),
       'role': entity.role,
     };
-    await sharedPreferences.setString(_authTokenKey, json.encode(jsonMap));
+
+    await sharedPreferences.setString(
+      _authTokenKey,
+      json.encode(jsonMap),
+    );
   }
 
   @override
@@ -37,9 +44,23 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
         role: jsonMap['role'] ?? 'user',
       );
     }
+
     return null;
   }
-
+  @override
+  String? getUid() {
+    final jsonString = sharedPreferences.getString(_authTokenKey);
+    if (jsonString == null) return null;
+    final jsonMap = json.decode(jsonString);
+    return jsonMap['userId'];
+  }
+  @override
+  String? getToken() {
+    final jsonString = sharedPreferences.getString(_authTokenKey);
+    if (jsonString == null) return null;
+    final jsonMap = json.decode(jsonString);
+    return jsonMap['token'];
+  }
   @override
   Future<void> clearAuthToken() async {
     await sharedPreferences.remove(_authTokenKey);

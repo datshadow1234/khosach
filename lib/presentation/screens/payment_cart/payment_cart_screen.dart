@@ -1,262 +1,280 @@
-// import 'package:flutter/material.dart';
-// import '../../models/cart_item.dart';
-// import '../../models/order_item.dart';
-// import '../order/orders_screen.dart';
-// import '../../../services/user_service.dart';
-// import 'package:provider/provider.dart';
-// import '../cart/cart_manager.dart';
-// import '../payment_cart/payment_cart_item.dart';
-// import '../order/order_manager.dart';
-// import '../shared/dialog_utils.dart';
-// import '../../widget/custom_rich_text.dart';
-//
-// class PaymentCartScreen1 extends StatefulWidget {
-//   static const routeName = '/payment-cart1';
-//
-//   const PaymentCartScreen1({super.key});
-//
-//   @override
-//   State<PaymentCartScreen1> createState() => _PaymentCartScreen1State();
-// }
-//
-// class _PaymentCartScreen1State extends State<PaymentCartScreen1> {
-//   late OrderItem _order;
-//   String zpTransToken = "";
-//   String payResult = "Thanh toán bằng tiền mặt";
-//   late Future<Map<String, dynamic>> _futureFetchUserInformation;
-//   @override
-//   void initState() {
-//     super.initState();
-//     _futureFetchUserInformation = UserService().fetchUserInformation();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final cart = context.watch<CartManager>();
-//     return Scaffold(
-//         appBar: AppBar(
-//           title: const Text('Trang thanh toán'),
-//         ),
-//         body: SingleChildScrollView(
-//           child: Column(
-//             children: <Widget>[
-//               SizedBox(height: 20),
-//               FutureBuilder<Map<String, dynamic>>(
-//                 future: _futureFetchUserInformation,
-//                 builder: (context, snapshot) {
-//                   if (snapshot.connectionState == ConnectionState.done) {
-//                     return Center(
-//                       child: Container(
-//                           alignment: Alignment.center,
-//                           child: Column(
-//                             children: [
-//                               paymentAddress(snapshot.data!['address']),
-//                               inforNameUser(snapshot.data!['name']),
-//                               const SizedBox(height: 20),
-//                               inforPhoneUser(snapshot.data!['phone']),
-//                               const SizedBox(height: 10),
-//                               SizedBox(
-//                                 height: cart.productCount * 85,
-//                                 child: buildCartDetails(cart),
-//                               ),
-//                               buildProductTotal(cart),
-//                               paymentNow(snapshot, cart),
-//                               const SizedBox(height: 20),
-//                             ],
-//                           )),
-//                     );
-//                   }
-//                   return const Center(child: CircularProgressIndicator());
-//                 },
-//               ),
-//             ],
-//           ),
-//         ));
-//   }
-//
-//   Widget inforPhoneUser(data) {
-//     return Row(
-//       children: [
-//         Container(
-//           height: 50,
-//           width: 150,
-//           alignment: Alignment.centerLeft,
-//           child: const Text('Số điện thoại:',
-//               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-//         ),
-//         Container(
-//           padding: const EdgeInsets.only(left: 20),
-//           color: Colors.white,
-//           height: 50,
-//           width: 200,
-//           child: Row(
-//             children: [
-//               // Container(
-//               //   padding: const EdgeInsets.all(12),
-//               //   decoration: BoxDecoration(
-//               //       borderRadius: BorderRadius.circular(100),
-//               //       border: Border.all(
-//               //         color: Colors.black,
-//               //         width: 0.5,
-//               //       )),
-//               //   child: Image.asset(
-//               //     'assets/Images/user-icon.png',
-//               //     color: Colors.black12,
-//               //     height: 23,
-//               //     width: 23,
-//               //   ),
-//               // ),
-//               const SizedBox(width: 7),
-//               Text(
-//                 data ?? '',
-//                 style: TextStyle(fontSize: 15),
-//               ),
-//             ],
-//           ),
-//         )
-//       ],
-//     );
-//   }
-//
-//   Widget paymentAddress(data) {
-//     return Column(children: [
-//       Container(
-//         height: 40,
-//         alignment: Alignment.centerLeft,
-//         child: const Text('Địa chỉ:',
-//             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-//       ),
-//       Container(
-//         padding: const EdgeInsets.all(10),
-//         height: 60,
-//         width: 400,
-//         margin: const EdgeInsets.only(bottom: 0),
-//         decoration: BoxDecoration(
-//             border: Border.all(
-//                 color: const Color.fromARGB(255, 64, 59, 59),
-//                 width: 0,
-//                 style: BorderStyle.solid),
-//             borderRadius: BorderRadius.circular(0)),
-//         child: Text(
-//           data,
-//           style: TextStyle(fontSize: 16),
-//         ),
-//       )
-//     ]);
-//   }
-//
-//   Widget inforNameUser(data) {
-//     return Column(
-//       children: [
-//         Container(
-//           height: 40,
-//           alignment: Alignment.centerLeft,
-//           child: const Text('Người mua:',
-//               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-//         ),
-//         Container(
-//           padding: const EdgeInsets.only(left: 20),
-//           color: Colors.white,
-//           height: 60,
-//           child: Row(
-//             children: [
-//               Container(
-//                 padding: const EdgeInsets.all(12),
-//                 decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(100),
-//                     border: Border.all(
-//                       color: Colors.black,
-//                       width: 0.5,
-//                     )),
-//                 child: Image.asset(
-//                   'assets/Images/user-icon.png',
-//                   color: Colors.black,
-//                   height: 23,
-//                   width: 23,
-//                 ),
-//               ),
-//               const SizedBox(width: 7),
-//               Text(
-//                 data ?? '',
-//                 style: TextStyle(fontSize: 15),
-//               ),
-//             ],
-//           ),
-//         )
-//       ],
-//     );
-//   }
-//
-//   Widget buildCartDetails(CartManager cart) {
-//     return ListView(
-//       children: cart.productEntries
-//           .map(
-//             (entry) => CartItemCard(
-//               productId: entry.key,
-//               cardItem: entry.value,
-//             ),
-//           )
-//           .toList(),
-//     );
-//   }
-//
-//   Widget buildProductTotal(CartManager cart) {
-//     return Container(
-//       height: 100,
-//       child: Container(
-//         child: Column(
-//           children: [
-//             CustomRowText(
-//               title: 'Tổng số lượng',
-//               value: '${cart.totalQuantity}',
-//             ),
-//             CustomRowText(
-//               title: 'Tổng giá',
-//               value: '${cart.totalAmount}',
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   // Widget paymentNow(snapshot, cart) {
-//   //   return Container(
-//   //     width: 400,
-//   //     height: 50,
-//   //     child: GestureDetector(
-//   //       onTap: () async {
-//   //         showDialog(
-//   //             context: context,
-//   //             builder: (BuildContext context) {
-//   //               return Center(
-//   //                 child: CircularProgressIndicator(),
-//   //               );
-//   //             });
-//   //         _order = OrderItem(
-//   //           amount: cart.totalAmount,
-//   //           products: cart.products,
-//   //           totalQuantity: cart.totalQuantity,
-//   //           name: snapshot.data['name'],
-//   //           phone: snapshot.data['phone'],
-//   //           address: snapshot.data['address'],
-//   //           customerId: snapshot.data['uid'],
-//   //           payResult: payResult,
-//   //         );
-//   //         context.read<OrdersManager>().addOrder(_order);
-//   //         // cart.clear();
-//   //         showMyDialog(context, cart);
-//   //         // Navigator.of(context).pushNamed(OrdersScreen.routeName);
-//   //       },
-//   //       child: Container(
-//   //           alignment: Alignment.center,
-//   //           decoration: BoxDecoration(
-//   //             color: Colors.red,
-//   //             borderRadius: BorderRadius.circular(1.0),
-//   //           ),
-//   //           child: Text("Thanh toán bằng tiền mặt",
-//   //               style: TextStyle(color: Colors.white, fontSize: 16))),
-//   //     ),
-//   //   );
-//   // }
-// }
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../domain/entities/order_entity.dart';
+import '../../blocs/auth_bloc/auth_bloc.dart';
+import '../../blocs/auth_bloc/auth_state.dart';
+import '../../blocs/cart_bloc/cart_bloc.dart';
+import '../../blocs/cart_bloc/cart_state.dart';
+import '../../blocs/order_bloc/order_bloc.dart';
+import '../../blocs/order_bloc/order_event.dart';
+import '../../blocs/order_bloc/order_state.dart';
+import '../../blocs/user_bloc/user_bloc.dart';
+import '../../blocs/user_bloc/user_event.dart';
+import '../../blocs/user_bloc/user_state.dart';
+import '../cart/cart_item_card.dart';
+
+class PaymentCartScreen1 extends StatefulWidget {
+  static const routeName = '/payment-cart1';
+
+  const PaymentCartScreen1({super.key});
+
+  @override
+  State<PaymentCartScreen1> createState() => _PaymentCartScreen1State();
+}
+
+class _PaymentCartScreen1State extends State<PaymentCartScreen1> {
+  final String payResult = "Thanh toán bằng tiền mặt";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthAuthenticated) {
+      context.read<UserBloc>().add(
+        FetchUserInfoEvent(
+          uid: authState.authToken.userId,
+          token: authState.authToken.token,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Trang thanh toán'),
+      ),
+      body: BlocListener<OrderBloc, OrderState>(
+        listener: (context, state) {
+          if (state is OrderLoading) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => const Center(child: CircularProgressIndicator()),
+            );
+          } else if (state is OrderSuccess) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Đặt hàng thành công!")),
+            );
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          } else if (state is OrderError) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Lỗi: ${state.message}")),
+            );
+          }
+        },
+        child: BlocBuilder<UserBloc, UserState>(
+          builder: (context, userState) {
+            if (userState is UserLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (userState is UserLoaded) {
+              final user = userState.user;
+
+              return BlocBuilder<CartBloc, CartState>(
+                builder: (context, cartState) {
+                  if (cartState is CartLoaded) {
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          paymentAddress(user.address),
+                          inforNameUser(user.name),
+                          inforPhoneUser(user.phone),
+                          const Divider(height: 30, thickness: 1),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            child: Text(
+                              "Danh sách sản phẩm",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: cartState.items.length,
+                            itemBuilder: (ctx, i) {
+                              final item = cartState.items[i];
+                              return CartItemCard(
+                                productId: item.productId,
+                                cardItem: item,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          buildProductTotal(cartState),
+                          const SizedBox(height: 20),
+                          paymentNow(user, cartState),
+                        ],
+                      ),
+                    );
+                  }
+                  return const Center(child: Text("Giỏ hàng đang trống"));
+                },
+              );
+            }
+
+            if (userState is UserError) {
+              return Center(child: Text("Lỗi tải thông tin: ${userState.message}"));
+            }
+
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget paymentAddress(String data) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(left: 15, bottom: 5),
+          child: Text(
+            'Địa chỉ giao hàng',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Text(data, style: const TextStyle(fontSize: 15)),
+        ),
+      ],
+    );
+  }
+
+  Widget inforNameUser(String data) {
+    return ListTile(
+      leading: const Icon(Icons.person, color: Colors.blue),
+      title: const Text('Người mua'),
+      subtitle: Text(data,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+    );
+  }
+
+  Widget inforPhoneUser(String data) {
+    return ListTile(
+      leading: const Icon(Icons.phone, color: Colors.green),
+      title: const Text('Số điện thoại'),
+      subtitle: Text(data,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+    );
+  }
+
+  Widget buildProductTotal(CartLoaded cart) {
+    return Container(
+      margin: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          CustomRowText(
+            title: 'Tổng số lượng items',
+            value: '${cart.totalQuantity}',
+          ),
+          const Divider(),
+          CustomRowText(
+            title: 'Tổng thanh toán',
+            value: '${cart.totalAmount} đ',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget paymentNow(dynamic user, CartLoaded cart) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.redAccent,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 5,
+        ),
+        onPressed: () {
+          final authState = context.read<AuthBloc>().state;
+          if (authState is AuthAuthenticated) {
+            final order = OrderEntity(
+              amount: cart.totalAmount,
+              products: cart.items,
+              totalQuantity: cart.totalQuantity,
+              name: user.name,
+              phone: user.phone,
+              address: user.address,
+              customerId: user.uid,
+              payResult: payResult,
+              dateTime: DateTime.now(),
+            );
+
+            context.read<OrderBloc>().add(
+              AddOrderEvent(order, authState.authToken.token),
+            );
+          }
+        },
+        child: const Text(
+          'XÁC NHẬN THANH TOÁN TIỀN MẶT',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+}
+
+class CustomRowText extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const CustomRowText({
+    super.key,
+    required this.title,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 16)),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.red,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

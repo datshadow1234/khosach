@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopbansach/presentation/bloc/auth_bloc/auth_bloc.dart';
-import 'package:shopbansach/presentation/bloc/auth_bloc/auth_event.dart';
-import 'package:shopbansach/presentation/bloc/logout_bloc/logout_bloc.dart';
-import 'package:shopbansach/presentation/bloc/logout_bloc/logout_event.dart';
-import 'package:shopbansach/presentation/bloc/logout_bloc/logout_state.dart';
+import '../blocs/auth_bloc/auth_bloc.dart';
+import '../blocs/auth_bloc/auth_event.dart';
+import '../blocs/logout_bloc/logout_bloc.dart';
+import '../blocs/logout_bloc/logout_event.dart';
+import '../blocs/logout_bloc/logout_state.dart';
 
 class AdminMainScreen extends StatefulWidget {
   final String title;

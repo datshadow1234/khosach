@@ -1,4 +1,4 @@
-import '../repositories/cart_repository.dart';
+import '../../repositories/cart_repository.dart';
 
 class RemoveCartUseCase {
   final CartRepository repository;

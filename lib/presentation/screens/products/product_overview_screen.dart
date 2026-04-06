@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/Language/language_cubit.dart';
 import '../../../core/theme/theme_cubit.dart';
-import '../../bloc/logout_bloc/logout_bloc.dart';
-import '../../bloc/logout_bloc/logout_event.dart';
-import '../../bloc/product_list_bloc/product_list_bloc.dart';
-import '../../bloc/product_list_bloc/product_list_event.dart';
-import '../../bloc/product_list_bloc/product_list_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../blocs/logout_bloc/logout_bloc.dart';
+import '../../blocs/logout_bloc/logout_event.dart';
+import '../../blocs/product_list_bloc/product_list_bloc.dart';
+import '../../blocs/product_list_bloc/product_list_event.dart';
+import '../../blocs/product_list_bloc/product_list_state.dart';
 import 'products_grid.dart';
 import 'search_product.dart';
 

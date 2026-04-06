@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
-import '../models/auth_response_model.dart';
+import '../../models/auth_model/auth_response_model.dart';
 
 part 'auth_client.g.dart';
 

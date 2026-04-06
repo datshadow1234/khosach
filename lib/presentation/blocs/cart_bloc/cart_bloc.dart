@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/usecases/get_cart_usecase.dart';
-import '../../../domain/usecases/add_to_cart_usecase.dart';
-import '../../../domain/usecases/remove_cart_usecase.dart';
-import '../../../domain/usecases/clear_cart_usecase.dart';
+import '../../../domain/usecases/cart_usecase/get_cart_usecase.dart';
+import '../../../domain/usecases/cart_usecase/remove_cart_usecase.dart';
+import '../../../domain/usecases/cart_usecase/add_to_cart_usecase.dart';
+import '../../../domain/usecases/cart_usecase/clear_cart_usecase.dart';
 import 'cart_event.dart';
 import 'cart_state.dart';
 

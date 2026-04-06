@@ -25,7 +25,6 @@ class CartItemEntity extends Equatable {
     required this.country,
   });
 
-  // THÊM HÀM NÀY VÀO ĐỂ HẾT LỖI GẠCH ĐỎ Ở REPOSITORY
   CartItemEntity copyWith({
     String? id,
     String? productId,
@@ -54,6 +53,47 @@ class CartItemEntity extends Equatable {
 
   double get totalPrice => price * quantity;
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'productId': productId,
+      'title': title,
+      'quantity': quantity,
+      'price': price,
+      'imageUrl': imageUrl,
+      'category': category,
+      'author': author,
+      'language': language,
+      'country': country,
+    };
+  }
+
+  factory CartItemEntity.fromJson(Map<String, dynamic> json) {
+    return CartItemEntity(
+      id: json['id'],
+      productId: json['productId'],
+      title: json['title'],
+      quantity: json['quantity'],
+      price: (json['price'] as num).toDouble(),
+      imageUrl: json['imageUrl'],
+      category: json['category'],
+      author: json['author'],
+      language: json['language'],
+      country: json['country'],
+    );
+  }
+
   @override
-  List<Object?> get props => [id, productId, title, quantity, price, imageUrl, category, author, language, country];
+  List<Object?> get props => [
+    id,
+    productId,
+    title,
+    quantity,
+    price,
+    imageUrl,
+    category,
+    author,
+    language,
+    country,
+  ];
 }

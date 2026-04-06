@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/entities/cart_item_entity.dart';
-import '../../bloc/cart_bloc/cart_bloc.dart';
-import '../../bloc/cart_bloc/cart_event.dart';
+import '../../blocs/cart_bloc/cart_bloc.dart';
+import '../../blocs/cart_bloc/cart_event.dart';
 import '../shared/dialog_utils.dart';
 
-class CartItemCard extends StatelessWidget {
+class CartItemCard extends StatefulWidget {
   final String productId;
   final CartItemEntity cardItem;
 
@@ -16,32 +16,55 @@ class CartItemCard extends StatelessWidget {
   });
 
   @override
+  State<CartItemCard> createState() => _CartItemCardState();
+}
+
+class _CartItemCardState extends State<CartItemCard> {
+  @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey(cardItem.id),
-      background: Container(
-        color: Theme.of(context).colorScheme.error,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(Icons.delete, color: Colors.white, size: 40),
-      ),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) => showConfirmDialog(
-        context,
-        'Bạn có muốn xóa sản phẩm này khỏi giỏ hàng?',
-      ),
-      onDismissed: (_) {
-        context.read<CartBloc>().add(RemoveCartEvent(productId));
-      },
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: Dismissible(
+        key: ValueKey(widget.cardItem.productId),
+        background: Container(
+          color: Theme.of(context).colorScheme.error,
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 20),
+          child: const Icon(Icons.delete, color: Colors.white, size: 30),
+        ),
+        direction: DismissDirection.endToStart,
+        confirmDismiss: (direction) {
+          return showConfirmDialog(
+            context,
+            'Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?',
+          );
+        },
+        onDismissed: (direction) {
+          context.read<CartBloc>().add(
+            RemoveCartEvent(widget.productId),
+          );
+        },
         child: ListTile(
           leading: CircleAvatar(
-            backgroundImage: NetworkImage(cardItem.imageUrl),
+            backgroundImage: NetworkImage(widget.cardItem.imageUrl),
+            backgroundColor: Colors.transparent,
           ),
-          title: Text(cardItem.title),
-          subtitle: Text('Giá: ${cardItem.price} VNĐ'),
-          trailing: Text('${cardItem.quantity}x'),
+          title: Text(
+            widget.cardItem.title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text('Giá: ${widget.cardItem.price} VNĐ'),
+          trailing: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              'x${widget.cardItem.quantity}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
         ),
       ),
     );

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shopbansach/presentation/bloc/auth_bloc/auth_bloc.dart';
-import 'package:shopbansach/presentation/bloc/auth_bloc/auth_event.dart';
-import 'package:shopbansach/presentation/bloc/logout_bloc/logout_bloc.dart';
-import 'package:shopbansach/presentation/bloc/logout_bloc/logout_state.dart';
 import 'package:shopbansach/presentation/screens/products/product_overview_screen.dart';
+import '../blocs/auth_bloc/auth_bloc.dart';
+import '../blocs/auth_bloc/auth_event.dart';
+import '../blocs/cart_bloc/cart_bloc.dart';
+import '../blocs/cart_bloc/cart_event.dart';
+import '../blocs/logout_bloc/logout_bloc.dart';
+import '../blocs/logout_bloc/logout_state.dart';
 import 'cart/cart_screen.dart';
+import 'order/orders_screen.dart';
+
 
 class UserMainScreen extends StatefulWidget {
   final String title;
@@ -20,12 +24,20 @@ class _UserMainScreenState extends State<UserMainScreen> {
   int index = 0;
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<CartBloc>().add(LoadCartEvent());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final screens = [
       const ProductsOverviewScreen(),
       const CartScreen(),
-      Center(child: Text(l10n.orders)),
+      const OrdersScreen(),
       Center(child: Text(l10n.profile)),
     ];
 

@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-// Lưu ý: Import này chỉ hoạt động sau khi bạn chạy lệnh tạo file hoặc Save file .arb
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'package:shopbansach/presentation/bloc/logout_bloc/logout_bloc.dart';
+import 'package:shopbansach/presentation/screens/payment_cart/payment_cart_screen.dart';
 import 'package:shopbansach/presentation/screens/user_main_screen.dart';
 import '../core/Language/language_cubit.dart';
-import 'bloc/cart_bloc/cart_bloc.dart';
-import 'bloc/cart_bloc/cart_event.dart';
-import 'bloc/login_bloc/login_bloc.dart';
-import 'bloc/signup_bloc/signup_bloc.dart';
+import 'blocs/auth_bloc/auth_bloc.dart';
+import 'blocs/auth_bloc/auth_event.dart';
+import 'blocs/auth_bloc/auth_state.dart';
+import 'blocs/cart_bloc/cart_bloc.dart';
+import 'blocs/cart_bloc/cart_event.dart';
+import 'blocs/login_bloc/login_bloc.dart';
+import 'blocs/logout_bloc/logout_bloc.dart';
+import 'blocs/order_bloc/order_bloc.dart';
+import 'blocs/product_list_bloc/product_list_bloc.dart';
+import 'blocs/product_list_bloc/product_list_event.dart';
+import 'blocs/signup_bloc/signup_bloc.dart';
+import 'blocs/user_bloc/user_bloc.dart';
 import 'screens/admin_main_screen.dart';
 import '../injection_container.dart';
-import 'bloc/auth_bloc/auth_bloc.dart';
-import 'bloc/auth_bloc/auth_event.dart';
-import 'bloc/auth_bloc/auth_state.dart';
-import 'bloc/product_list_bloc/product_list_bloc.dart';
-import 'bloc/product_list_bloc/product_list_event.dart';
 import '../core/theme/theme_cubit.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/splash_screen.dart';
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<ProductListBloc>()..add(FetchProductsEvent())),
         BlocProvider(create: (_) => sl<LogoutBloc>()),
         BlocProvider(create: (_) => sl<CartBloc>()..add(LoadCartEvent())),
+        BlocProvider(create: (_) => sl<OrderBloc>()),
+        BlocProvider(create: (_) => sl<UserBloc>()),
       ],
       child: BlocBuilder<LanguageCubit, Locale>(
         builder: (context, locale) {
@@ -63,6 +66,9 @@ class MyApp extends StatelessWidget {
                   brightness: Brightness.dark,
                   colorSchemeSeed: Colors.deepPurple,
                 ),
+                routes: {
+                  PaymentCartScreen1.routeName: (context) => const PaymentCartScreen1(),
+                },
                 home: BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     if (state is AuthAuthenticated) {

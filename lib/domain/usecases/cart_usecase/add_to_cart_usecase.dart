@@ -1,5 +1,5 @@
-import '../entities/cart_item_entity.dart';
-import '../repositories/cart_repository.dart';
+import '../../entities/cart_item_entity.dart';
+import '../../repositories/cart_repository.dart';
 
 class AddToCartUseCase {
   final CartRepository repository;

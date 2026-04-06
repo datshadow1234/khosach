@@ -1,8 +1,8 @@
 import '../../domain/entities/product_entity.dart';
 import '../../domain/repositories/product_repository.dart';
-import '../clients/products_client.dart';
+import '../clients/product_client/products_client.dart';
 import '../datasources/auth_local_data_source.dart';
-import '../models/product_model.dart';
+import '../models/product_model/product_model.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   final ProductClient client;

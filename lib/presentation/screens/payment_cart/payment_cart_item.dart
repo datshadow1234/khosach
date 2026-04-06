@@ -1,82 +1,73 @@
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import '../../../domain/entities/cart_item_entity.dart';
-// import '../shared/dialog_utils.dart';
-// import '../shared/dialog_utils.dart';
-// import '../cart/cart_manager.dart';
-//
-// class CartItemCard extends StatefulWidget {
-//   final String productId;
-//   final CartItemEntity cardItem;
-//
-//   const CartItemCard({
-//     required this.productId,
-//     required this.cardItem,
-//     super.key,
-//   });
-//
-//   @override
-//   State<CartItemCard> createState() => _CartItemCardState();
-// }
-//
-// class _CartItemCardState extends State<CartItemCard> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       child: Column(
-//         children: [
-//           Dismissible(
-//             key: ValueKey(widget.cardItem.id),
-//             background: Container(
-//               color: Theme.of(context).colorScheme.error,
-//               alignment: Alignment.centerRight,
-//               padding: const EdgeInsets.only(right: 20),
-//               margin: const EdgeInsets.symmetric(
-//                 horizontal: 15,
-//                 vertical: 4,
-//               ),
-//               child: const Icon(
-//                 Icons.delete,
-//                 color: Colors.white,
-//                 size: 40,
-//               ),
-//             ),
-//             direction: DismissDirection.endToStart,
-//             confirmDismiss: (directiion) {
-//               return showConfirmDialog(
-//                 context,
-//                 'Bạn có chắc muốn xóa sản phẩm này?',
-//               );
-//             },
-//             onDismissed: (direction) {
-//               context.read<CartManager>().removeItem(widget.productId);
-//             },
-//             child: buildItemCard(),
-//           )
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Widget buildItemCard() {
-//     return Card(
-//       margin: const EdgeInsets.symmetric(
-//         horizontal: 0,
-//         vertical: 0,
-//       ),
-//       child: Padding(
-//         padding: const EdgeInsets.all(0),
-//         child: ListTile(
-//           leading: CircleAvatar(
-//             backgroundImage: NetworkImage(widget.cardItem.imageUrl),
-//           ),
-//           title: Text(widget.cardItem.title),
-//           subtitle: Text(
-//               'Giá: ${(widget.cardItem.price)}'),
-//           trailing: Text('SL: ${widget.cardItem.quantity}'),
-//         ),
-//       ),
-//     );
-//   }
-//
-// }
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../domain/entities/cart_item_entity.dart';
+import '../../blocs/cart_bloc/cart_bloc.dart';
+import '../../blocs/cart_bloc/cart_event.dart';
+import '../shared/dialog_utils.dart';
+
+class CartItemCard extends StatefulWidget {
+  final String productId;
+  final CartItemEntity cardItem;
+
+  const CartItemCard({
+    required this.productId,
+    required this.cardItem,
+    super.key,
+  });
+
+  @override
+  State<CartItemCard> createState() => _CartItemCardState();
+}
+
+class _CartItemCardState extends State<CartItemCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: ValueKey(widget.cardItem.productId),
+      background: Container(
+        color: Theme.of(context).colorScheme.error,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+        child: const Icon(Icons.delete, color: Colors.white, size: 30),
+      ),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (direction) {
+        return showConfirmDialog(
+          context,
+          'Bạn có chắc muốn xóa sản phẩm "${widget.cardItem.title}" khỏi giỏ hàng?',
+        );
+      },
+      onDismissed: (direction) {
+        context.read<CartBloc>().add(
+          RemoveCartEvent(widget.productId),
+        );
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(widget.cardItem.imageUrl),
+            backgroundColor: Colors.transparent,
+          ),
+          title: Text(
+            widget.cardItem.title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text('Giá: ${widget.cardItem.price} đ'),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.blueGrey.shade50,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              'SL: ${widget.cardItem.quantity}',
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

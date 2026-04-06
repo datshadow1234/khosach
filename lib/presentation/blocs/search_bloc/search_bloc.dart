@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopbansach/presentation/bloc/search_bloc/search_event.dart';
-import 'package:shopbansach/presentation/bloc/search_bloc/search_state.dart';
+import 'package:shopbansach/presentation/blocs/search_bloc/search_event.dart';
+import 'package:shopbansach/presentation/blocs/search_bloc/search_state.dart';
 import '../../../domain/usecases/search_products_usecase.dart';
 import '../product_list_bloc/product_list_bloc.dart';
 import '../product_list_bloc/product_list_state.dart';

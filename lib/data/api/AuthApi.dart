@@ -6,7 +6,7 @@ import 'dart:convert';
 
 import '../../domain/entities/auth_token_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../clients/auth_client.dart';
+import '../clients/auth_client/auth_client.dart';
 
 class AuthApi implements AuthRepository {
   late AuthClient _api;
