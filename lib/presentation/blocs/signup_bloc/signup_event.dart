@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-
+import 'signup_bloc_widget.dart';
 abstract class SignupEvent extends Equatable {
   const SignupEvent();
   @override

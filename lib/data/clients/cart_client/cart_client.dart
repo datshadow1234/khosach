@@ -8,7 +8,7 @@ part 'cart_client.g.dart';
 abstract class CartClient {
   factory CartClient(Dio dio, {String baseUrl}) = _CartClient;
 
-  @GET("/carts/{uid}.g.json")
+  @GET("/carts/{uid}.json")
   Future<Map<String, CartItemModel>?> getCart(
       @Path("uid") String uid,
       @Query("auth") String token,

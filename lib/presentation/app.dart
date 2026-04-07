@@ -1,27 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shopbansach/presentation/screens/payment_cart/payment_cart_screen.dart';
-import 'package:shopbansach/presentation/screens/user_main_screen.dart';
-import '../core/Language/language_cubit.dart';
-import 'blocs/auth_bloc/auth_bloc.dart';
-import 'blocs/auth_bloc/auth_event.dart';
-import 'blocs/auth_bloc/auth_state.dart';
-import 'blocs/cart_bloc/cart_bloc.dart';
-import 'blocs/cart_bloc/cart_event.dart';
-import 'blocs/login_bloc/login_bloc.dart';
-import 'blocs/logout_bloc/logout_bloc.dart';
-import 'blocs/order_bloc/order_bloc.dart';
-import 'blocs/product_list_bloc/product_list_bloc.dart';
-import 'blocs/product_list_bloc/product_list_event.dart';
-import 'blocs/signup_bloc/signup_bloc.dart';
-import 'blocs/user_bloc/user_bloc.dart';
-import 'screens/admin_main_screen.dart';
-import '../injection_container.dart';
-import '../core/theme/theme_cubit.dart';
-import 'screens/auth/auth_screen.dart';
-import 'screens/splash_screen.dart';
+import 'screens/screen_widget.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

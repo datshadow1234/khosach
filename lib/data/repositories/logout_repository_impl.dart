@@ -1,5 +1,4 @@
-import '../../domain/repositories/logout_repository.dart';
-import '../datasources/auth_local_data_source.dart';
+import 'repositories_widget.dart';
 
 class LogoutRepositoryImpl implements LogoutRepository {
   final AuthLocalDataSource localDataSource;

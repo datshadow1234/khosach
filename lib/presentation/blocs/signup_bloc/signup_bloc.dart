@@ -1,9 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/entities/auth_token_entity.dart';
-import '../../../domain/repositories/signup_repository.dart';
-import 'signup_event.dart';
-import 'signup_state.dart';
-
+import 'signup_bloc_widget.dart';
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
   final SignupRepository repository;
 

@@ -1,5 +1,4 @@
-import '../../../domain/entities/order_entity.dart';
-
+import 'order_bloc_widget.dart';
 abstract class OrderState {}
 
 class OrderInitial extends OrderState {}

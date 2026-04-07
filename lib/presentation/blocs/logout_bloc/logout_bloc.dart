@@ -1,7 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/repositories/logout_repository.dart';
-import 'logout_event.dart';
-import 'logout_state.dart';
+import 'logout_bloc_widget.dart';
 
 class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
   final LogoutRepository repository;

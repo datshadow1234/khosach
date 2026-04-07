@@ -1,5 +1,4 @@
-import '../../domain/entities/product_entity.dart';
-import '../../domain/repositories/search_repository.dart';
+import 'repositories_widget.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
   @override

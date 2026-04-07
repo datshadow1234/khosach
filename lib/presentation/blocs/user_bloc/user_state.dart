@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-import '../../../domain/entities/user_entity.dart';
-
+import 'user_bloc_widget.dart';
 abstract class UserState extends Equatable {
   const UserState();
 

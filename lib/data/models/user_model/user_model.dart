@@ -20,6 +20,7 @@ class UserModel with _$UserModel {
   static UserEntity toEntity(UserModel model) {
     return UserEntity(
       uid: model.uid,
+      imageUrl: '',
       email: model.email,
       name: model.name,
       phone: model.phone,

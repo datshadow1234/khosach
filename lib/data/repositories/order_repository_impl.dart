@@ -1,8 +1,4 @@
-import '../../domain/entities/cart_item_entity.dart';
-import '../../domain/entities/order_entity.dart';
-import '../../domain/repositories/order_repository.dart';
-import '../clients/order_client/order_client.dart';
-import '../models/order_model/order_model.dart';
+import 'repositories_widget.dart';
 
 class OrderRepositoryImpl implements OrderRepository {
   final OrderClient orderClient;
@@ -26,28 +22,38 @@ class OrderRepositoryImpl implements OrderRepository {
     );
 
     if (response == null) return [];
+
     final Map<String, dynamic> data = Map<String, dynamic>.from(response as Map);
-    return data.entries.map<OrderEntity>((e) {
-      final model = OrderModel.fromJson(
-        Map<String, dynamic>.from(e.value as Map),
-      );
+    List<OrderEntity> validOrders = [];
 
-      final products = model.products
-          .map<CartItemEntity>((p) => CartItemEntity.fromJson(Map<String, dynamic>.from(p as Map)))
-          .toList();
+    for (var e in data.entries) {
+      try {
+        final model = OrderModel.fromJson(
+          Map<String, dynamic>.from(e.value as Map),
+        );
 
-      return OrderEntity(
-        id: e.key,
-        amount: model.amount,
-        products: products,
-        totalQuantity: model.totalQuantity,
-        name: model.name,
-        phone: model.phone,
-        address: model.address,
-        customerId: model.customerId,
-        payResult: model.payResult,
-        dateTime: DateTime.parse(model.dateTime),
-      );
-    }).toList();
+        final products = model.products
+            .map<CartItemEntity>((p) => CartItemEntity.fromJson(Map<String, dynamic>.from(p as Map)))
+            .toList();
+
+        validOrders.add(OrderEntity(
+          id: e.key,
+          amount: model.amount,
+          products: products,
+          totalQuantity: model.totalQuantity,
+          name: model.name,
+          phone: model.phone,
+          address: model.address,
+          customerId: model.customerId,
+          payResult: model.payResult,
+          dateTime: DateTime.parse(model.dateTime),
+        ));
+      } catch (error) {
+        debugPrint('Lỗi parse đơn hàng ID ${e.key}: $error');
+      }
+    }
+    validOrders.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+
+    return validOrders;
   }
 }

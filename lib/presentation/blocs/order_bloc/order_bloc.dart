@@ -1,8 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/usecases/add_order_usecase.dart';
-import '../../../domain/usecases/get_orders_usecase.dart';
-import 'order_event.dart';
-import 'order_state.dart';
+import 'order_bloc_widget.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   final AddOrderUseCase addOrderUseCase;

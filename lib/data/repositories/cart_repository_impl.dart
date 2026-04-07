@@ -1,8 +1,5 @@
-import '../../domain/entities/cart_item_entity.dart';
-import '../../domain/repositories/cart_repository.dart';
-import '../clients/cart_client/cart_client.dart';
-import '../datasources/auth_local_data_source.dart';
-import '../models/cart_model/cart_item_model.dart';
+import 'repositories_widget.dart';
+
 class CartRepositoryImpl implements CartRepository {
   final CartClient cartClient;
   final AuthLocalDataSource authLocalDataSource;

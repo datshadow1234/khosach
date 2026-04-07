@@ -8,15 +8,15 @@ part 'order_model.g.dart';
 class OrderModel with _$OrderModel {
   const factory OrderModel({
     String? id,
-    required double amount,
-    required List<Map<String, dynamic>> products,
-    required int totalQuantity,
-    required String name,
-    required String phone,
-    required String address,
-    required String customerId,
-    required String payResult,
-    required String dateTime,
+    @Default(0.0) double amount,
+    @Default([]) List<Map<String, dynamic>> products,
+    @Default(0) int totalQuantity,
+    @Default('') String name,
+    @Default('') String phone,
+    @Default('') String address,
+    @Default('') String customerId,
+    @Default('') String payResult,
+    @Default('2024-01-01T00:00:00.000') String dateTime,
   }) = _OrderModel;
 
   factory OrderModel.fromJson(Map<String, dynamic> json) =>

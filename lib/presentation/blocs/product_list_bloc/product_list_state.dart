@@ -1,6 +1,4 @@
-import 'package:equatable/equatable.dart';
-import '../../../domain/entities/product_entity.dart';
-
+import 'product_list_bloc_widget.dart';
 abstract class ProductListState extends Equatable {
   @override
   List<Object?> get props => [];

@@ -1,4 +1,4 @@
-import '../../../domain/entities/product_entity.dart';
+import 'search_bloc_widget.dart';
 
 abstract class SearchState {}
 

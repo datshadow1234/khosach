@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import '../../../domain/entities/auth_token_entity.dart';
+import 'signup_bloc_widget.dart';
 
 abstract class SignupState extends Equatable {
   const SignupState();

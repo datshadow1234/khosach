@@ -1,7 +1,4 @@
-import '../../domain/entities/user_entity.dart';
-import '../../domain/repositories/user_repository.dart';
-import '../clients/user_client/user_db_client.dart';
-import '../models/user_model/user_model.dart';
+import 'repositories_widget.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final UserDbClient userDbClient;
@@ -35,12 +32,10 @@ class UserRepositoryImpl implements UserRepository {
   Future<UserEntity> getUserInfo(String uid, String token) async {
     try {
       final response = await userDbClient.getUserInfo(uid, token);
-
-      // --- SỬA Ở ĐÂY ---
-      // Nếu Firebase không có data (trả về null), tạo User mặc định để không bị crash
       if (response == null) {
         return UserEntity(
           uid: uid,
+          imageUrl: '',
           email: 'Chưa cập nhật',
           name: 'Khách hàng',
           phone: 'Chưa có SĐT',

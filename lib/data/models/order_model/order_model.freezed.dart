@@ -226,15 +226,15 @@ class __$$OrderModelImplCopyWithImpl<$Res>
 class _$OrderModelImpl implements _OrderModel {
   const _$OrderModelImpl(
       {this.id,
-      required this.amount,
-      required final List<Map<String, dynamic>> products,
-      required this.totalQuantity,
-      required this.name,
-      required this.phone,
-      required this.address,
-      required this.customerId,
-      required this.payResult,
-      required this.dateTime})
+      this.amount = 0.0,
+      final List<Map<String, dynamic>> products = const [],
+      this.totalQuantity = 0,
+      this.name = '',
+      this.phone = '',
+      this.address = '',
+      this.customerId = '',
+      this.payResult = '',
+      this.dateTime = '2024-01-01T00:00:00.000'})
       : _products = products;
 
   factory _$OrderModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -243,9 +243,11 @@ class _$OrderModelImpl implements _OrderModel {
   @override
   final String? id;
   @override
+  @JsonKey()
   final double amount;
   final List<Map<String, dynamic>> _products;
   @override
+  @JsonKey()
   List<Map<String, dynamic>> get products {
     if (_products is EqualUnmodifiableListView) return _products;
     // ignore: implicit_dynamic_type
@@ -253,18 +255,25 @@ class _$OrderModelImpl implements _OrderModel {
   }
 
   @override
+  @JsonKey()
   final int totalQuantity;
   @override
+  @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String phone;
   @override
+  @JsonKey()
   final String address;
   @override
+  @JsonKey()
   final String customerId;
   @override
+  @JsonKey()
   final String payResult;
   @override
+  @JsonKey()
   final String dateTime;
 
   @override
@@ -327,15 +336,15 @@ class _$OrderModelImpl implements _OrderModel {
 abstract class _OrderModel implements OrderModel {
   const factory _OrderModel(
       {final String? id,
-      required final double amount,
-      required final List<Map<String, dynamic>> products,
-      required final int totalQuantity,
-      required final String name,
-      required final String phone,
-      required final String address,
-      required final String customerId,
-      required final String payResult,
-      required final String dateTime}) = _$OrderModelImpl;
+      final double amount,
+      final List<Map<String, dynamic>> products,
+      final int totalQuantity,
+      final String name,
+      final String phone,
+      final String address,
+      final String customerId,
+      final String payResult,
+      final String dateTime}) = _$OrderModelImpl;
 
   factory _OrderModel.fromJson(Map<String, dynamic> json) =
       _$OrderModelImpl.fromJson;

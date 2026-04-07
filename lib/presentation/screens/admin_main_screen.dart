@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/auth_bloc/auth_bloc.dart';
-import '../blocs/auth_bloc/auth_event.dart';
-import '../blocs/logout_bloc/logout_bloc.dart';
-import '../blocs/logout_bloc/logout_event.dart';
-import '../blocs/logout_bloc/logout_state.dart';
-
+import 'screen_widget.dart';
 class AdminMainScreen extends StatefulWidget {
   final String title;
   const AdminMainScreen({super.key, required this.title});

@@ -9,17 +9,18 @@ part of 'order_model.dart';
 _$OrderModelImpl _$$OrderModelImplFromJson(Map<String, dynamic> json) =>
     _$OrderModelImpl(
       id: json['id'] as String?,
-      amount: (json['amount'] as num).toDouble(),
-      products: (json['products'] as List<dynamic>)
-          .map((e) => e as Map<String, dynamic>)
-          .toList(),
-      totalQuantity: (json['totalQuantity'] as num).toInt(),
-      name: json['name'] as String,
-      phone: json['phone'] as String,
-      address: json['address'] as String,
-      customerId: json['customerId'] as String,
-      payResult: json['payResult'] as String,
-      dateTime: json['dateTime'] as String,
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      products: (json['products'] as List<dynamic>?)
+              ?.map((e) => e as Map<String, dynamic>)
+              .toList() ??
+          const [],
+      totalQuantity: (json['totalQuantity'] as num?)?.toInt() ?? 0,
+      name: json['name'] as String? ?? '',
+      phone: json['phone'] as String? ?? '',
+      address: json['address'] as String? ?? '',
+      customerId: json['customerId'] as String? ?? '',
+      payResult: json['payResult'] as String? ?? '',
+      dateTime: json['dateTime'] as String? ?? '2024-01-01T00:00:00.000',
     );
 
 Map<String, dynamic> _$$OrderModelImplToJson(_$OrderModelImpl instance) =>

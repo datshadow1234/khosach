@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-
+import 'user_bloc_widget.dart';
 abstract class UserEvent extends Equatable {
   const UserEvent();
 
