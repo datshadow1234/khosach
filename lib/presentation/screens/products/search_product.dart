@@ -1,10 +1,4 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopbansach/presentation/screens/products/product_detail_screen.dart';
-import '../../blocs/product_list_bloc/product_list_bloc.dart';
-import '../../blocs/product_list_bloc/product_list_event.dart';
-import '../../blocs/product_list_bloc/product_list_state.dart';
+import 'product_widget.dart';
 
 class SearchScreen extends StatefulWidget {
   static const routeName = '/search';

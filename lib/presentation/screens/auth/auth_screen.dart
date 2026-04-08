@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-
-import 'auth_card.dart';
-import 'app_banner.dart';
+import 'auth_screen_widget.dart';
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';

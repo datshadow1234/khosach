@@ -1,10 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/usecases/cart_usecase/get_cart_usecase.dart';
-import '../../../domain/usecases/cart_usecase/remove_cart_usecase.dart';
-import '../../../domain/usecases/cart_usecase/add_to_cart_usecase.dart';
-import '../../../domain/usecases/cart_usecase/clear_cart_usecase.dart';
-import 'cart_event.dart';
-import 'cart_state.dart';
+import 'cart_bloc_widget.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   final GetCartUseCase getCartUseCase;

@@ -1,5 +1,4 @@
-import '../entities/order_entity.dart';
-import '../repositories/order_repository.dart';
+import 'usecase_widget.dart';
 
 class GetOrdersUseCase {
   final OrderRepository repository;

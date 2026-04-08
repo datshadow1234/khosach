@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:shopbansach/domain/entities/order_entity.dart';
+
+import 'order_screen_widget.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   static const routeName = 'order-detail-screen';

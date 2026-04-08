@@ -1,4 +1,4 @@
-import '../repositories/logout_repository.dart';
+import 'usecase_widget.dart';
 
 class LogoutUseCase {
   final LogoutRepository repository;

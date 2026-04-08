@@ -1,6 +1,4 @@
-// lib/domain/usecases/try_auto_login_usecase.dart
-import '../entities/auth_token_entity.dart';
-import '../repositories/auth_repository.dart';
+import 'usecase_widget.dart';
 
 class TryAutoLoginUseCase {
   final AuthRepository repository;

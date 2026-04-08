@@ -1,18 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../domain/entities/order_entity.dart';
-import '../../blocs/auth_bloc/auth_bloc.dart';
-import '../../blocs/auth_bloc/auth_state.dart';
-import '../../blocs/cart_bloc/cart_bloc.dart';
-import '../../blocs/cart_bloc/cart_state.dart';
-import '../../blocs/order_bloc/order_bloc.dart';
-import '../../blocs/order_bloc/order_event.dart';
-import '../../blocs/order_bloc/order_state.dart';
-import '../../blocs/user_bloc/user_bloc.dart';
-import '../../blocs/user_bloc/user_event.dart';
-import '../../blocs/user_bloc/user_state.dart';
-import '../cart/cart_item_card.dart';
+import 'payment_widget.dart';
 
 class PaymentCartScreen1 extends StatefulWidget {
   static const routeName = '/payment-cart1';

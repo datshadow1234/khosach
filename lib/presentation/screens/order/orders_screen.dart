@@ -1,12 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/datasources/auth_local_data_source.dart';
-import '../../../injection_container.dart';
-import '../../blocs/order_bloc/order_bloc.dart';
-import '../../blocs/order_bloc/order_event.dart';
-import '../../blocs/order_bloc/order_state.dart';
-import 'order_detail_screen.dart';
-import 'order_item_card.dart';
+import 'order_screen_widget.dart';
 
 class OrdersScreen extends StatefulWidget {
   static const routeName = '/orders';

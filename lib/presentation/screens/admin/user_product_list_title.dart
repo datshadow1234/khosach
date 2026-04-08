@@ -1,19 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-
-import '../../models/product.dart';
-import '../products/products_manager.dart';
-import 'edit_product_screen.dart';
+import 'admin_screen_widget.dart';
 
 class UserProductListTile extends StatelessWidget {
   static const routeName = '/admin-products';
-  final Product product;
+  final ProductEntity product;
 
   const UserProductListTile(
-    this.product, {
-    super.key,
-  });
+      this.product, {
+        super.key,
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +33,7 @@ class UserProductListTile extends StatelessWidget {
       onPressed: () async {
         Navigator.of(context).pushNamed(
           EditProductScreen.routeName,
-          arguments: product.id,
+          arguments: product,
         );
       },
       icon: const Icon(Icons.edit),
@@ -50,14 +44,14 @@ class UserProductListTile extends StatelessWidget {
   Widget buildDeleteButton(BuildContext context) {
     return IconButton(
       onPressed: () {
-        context.read<ProductsManager>().deleteProduct(product.id!);
+        context.read<AdminProductBloc>().add(DeleteAdminProduct(product.id));
         ScaffoldMessenger.of(context)
           ..hideCurrentMaterialBanner()
           ..showSnackBar(const SnackBar(
               content: Text(
-            'Sản phẩm đã xóa',
-            textAlign: TextAlign.center,
-          )));
+                'Sản phẩm đã xóa',
+                textAlign: TextAlign.center,
+              )));
       },
       icon: const Icon(Icons.delete),
       color: Theme.of(context).colorScheme.error,

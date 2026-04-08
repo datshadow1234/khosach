@@ -1,6 +1,4 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
+import 'auth_screen_widget.dart';
 
 class AppBanner extends StatelessWidget {
   const AppBanner({

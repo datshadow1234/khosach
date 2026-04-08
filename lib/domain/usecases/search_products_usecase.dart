@@ -1,5 +1,4 @@
-import '../entities/product_entity.dart';
-import '../repositories/search_repository.dart';
+import 'usecase_widget.dart';
 
 class SearchProductsUseCase {
   final SearchRepository repository;

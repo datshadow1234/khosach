@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/entities/cart_item_entity.dart';
-import '../../blocs/cart_bloc/cart_bloc.dart';
-import '../../blocs/cart_bloc/cart_event.dart';
-import '../shared/dialog_utils.dart';
+import 'payment_widget.dart';
 
 class CartItemCard extends StatefulWidget {
   final String productId;

@@ -1,84 +1,96 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'admin_screen_widget.dart';
 
-import 'edit_product_screen.dart';
-import 'user_product_list_title.dart';
-
-import '../products/products_manager.dart';
-
-class UserProductsScreen extends StatelessWidget {
+class UserProductsScreen extends StatefulWidget {
   static const routeName = '/admin-product';
   const UserProductsScreen({super.key});
 
+  @override
+  State<UserProductsScreen> createState() => _UserProductsScreenState();
+}
+
+class _UserProductsScreenState extends State<UserProductsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AdminProductBloc>().add(FetchAdminProducts());
+  }
+
   Future<void> _refreshProduct(BuildContext context) async {
-    await context.read<ProductsManager>().fetchProducts();
+    context.read<AdminProductBloc>().add(FetchAdminProducts());
   }
 
   @override
   Widget build(BuildContext context) {
-    final productsManager = ProductsManager();
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('ADMIN'),
-          actions: [
-            buildAddButton(context),
-          ],
-        ),
-        body: FutureBuilder(
-            future: _refreshProduct(context),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return RefreshIndicator(
-                onRefresh: () async =>
-                _refreshProduct(context),
-                child: Column(
-                  children: [
-                    buildTotalProduct(productsManager),
-                    SizedBox(height: 650 ,child: buildUserProductListView(productsManager)),
-                  ],
-                )
-              );
-            }));
-  }
-}
-Widget buildTotalProduct(ProductsManager productsManager){
-    return Consumer<ProductsManager>(
-      builder: (context, productsManager, child) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text("Tổng số sản phẩm là: ${productsManager.itemCount}", style: const TextStyle(color: Colors.grey, fontSize: 18),),
-          ],
-        );
-      },
+      appBar: AppBar(
+        title: const Text('ADMIN'),
+        actions: [
+          buildAddButton(context),
+        ],
+      ),
+      body: BlocBuilder<AdminProductBloc, AdminProductState>(
+        builder: (context, state) {
+          if (state is AdminProductLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is AdminProductError) {
+            return Center(child: Text(state.message));
+          }
+          if (state is AdminProductLoaded) {
+            return RefreshIndicator(
+              onRefresh: () => _refreshProduct(context),
+              child: Column(
+                children: [
+                  buildTotalProduct(state.allProducts.length),
+                  SizedBox(
+                    height: 650,
+                    child: buildUserProductListView(state.allProducts),
+                  ),
+                ],
+              ),
+            );
+          }
+          return const SizedBox();
+        },
+      ),
     );
-}
-Widget buildAddButton(BuildContext context) {
-  return IconButton(
-      onPressed: () {
-        Navigator.of(context).pushNamed(
-          EditProductScreen.routeName,
-        );
-      },
-      icon: const Icon(Icons.add));
-}
+  }
 
-Widget buildUserProductListView(ProductsManager productsManager) {
-  return Consumer<ProductsManager>(builder: (context, productsManager, child) {
+  Widget buildTotalProduct(int itemCount) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Text(
+          "Tổng số sản phẩm là: $itemCount",
+          style: const TextStyle(color: Colors.grey, fontSize: 18),
+        ),
+      ],
+    );
+  }
+
+  Widget buildAddButton(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            EditProductScreen.routeName,
+          );
+        },
+        icon: const Icon(Icons.add));
+  }
+
+  Widget buildUserProductListView(List products) {
     return ListView.builder(
-      itemCount: productsManager.itemCount,
+      itemCount: products.length,
       itemBuilder: (context, index) => Column(
         children: [
           UserProductListTile(
-            productsManager.items[index],
+            products[index],
           ),
           const Divider(),
         ],
       ),
     );
-  });
+  }
 }

@@ -1,5 +1,4 @@
-import '../entities/auth_token_entity.dart';
-import '../repositories/signup_repository.dart';
+import 'usecase_widget.dart';
 
 class SignupUseCase {
   final SignupRepository repository;

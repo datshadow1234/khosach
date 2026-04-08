@@ -1,8 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../domain/entities/auth_token_entity.dart';
-import '../../../domain/repositories/login_repository.dart';
-import 'login_event.dart';
-import 'login_state.dart';
+import 'login_bloc_widget.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository repository;

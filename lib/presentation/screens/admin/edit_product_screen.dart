@@ -1,18 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../shared/dialog_utils.dart';
+import 'admin_screen_widget.dart';
 
-
-class EditProductScreen extends StatefulWidget {aqasa
+class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-product';
 
   EditProductScreen(
-    Product? product, {
-    super.key,
-  }) {
+      ProductEntity? product, {
+        super.key,
+      }) {
     if (product == null) {
-      this.product = Product(
-        id: null,
+      this.product = const ProductEntity(
+        id: '',
         title: '',
         category: '',
         author: '',
@@ -27,7 +24,7 @@ class EditProductScreen extends StatefulWidget {aqasa
     }
   }
 
-  late final Product product;
+  late final ProductEntity product;
   @override
   State<EditProductScreen> createState() => _EditProductScreenState();
 }
@@ -36,9 +33,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _editForm = GlobalKey<FormState>();
-  late Product _editedProduct;
+  late ProductEntity _editedProduct;
 
-  var _isLoading = false;
   bool _isValidImageUrl(String value) {
     return (value.startsWith('http') ||
         value.startsWith('https') && (value.endsWith('.png')) ||
@@ -68,51 +64,48 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
-  @override
-  Future<void> _saveForm() async {
+  void _saveForm() {
     final isValid = _editForm.currentState!.validate();
     if (!isValid) {
       return;
     }
     _editForm.currentState!.save();
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      final productsManager = context.read<ProductsManager>();
-      if (_editedProduct.id != null) {
-        await productsManager.updateProduct(_editedProduct);
-      } else {
-        await productsManager.addProduct(_editedProduct);
-      }
-    } catch (error) {
-      await showErrorDialog(context, 'Something went wrong.');
-    }
-    setState(() {
-      _isLoading = false;
-    });
-    if (mounted) {
-      Navigator.of(context).pop();
+
+    if (_editedProduct.id.isNotEmpty) {
+      context.read<AdminProductBloc>().add(UpdateAdminProduct(_editedProduct));
+    } else {
+      context.read<AdminProductBloc>().add(AddAdminProduct(_editedProduct));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit product'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _saveForm,
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Padding(
+    return BlocListener<AdminProductBloc, AdminProductState>(
+      listener: (context, state) {
+        if (state is AdminProductActionSuccess) {
+          Navigator.of(context).pop();
+        } else if (state is AdminProductError) {
+          showErrorDialog(context, 'Something went wrong: ${state.message}');
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Edit product'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: _saveForm,
+            ),
+          ],
+        ),
+        body: BlocBuilder<AdminProductBloc, AdminProductState>(
+          builder: (context, state) {
+            if (state is AdminProductActionLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Padding(
               padding: const EdgeInsets.all(16),
               child: Form(
                 key: _editForm,
@@ -129,7 +122,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   ],
                 ),
               ),
-            ),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -204,7 +200,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
       },
     );
   }
-    TextFormField buildLanguageField() {
+
+  TextFormField buildLanguageField() {
     return TextFormField(
       initialValue: _editedProduct.language,
       decoration: const InputDecoration(labelText: 'Ngôn ngữ'),
@@ -287,11 +284,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: _imageUrlController.text.isEmpty
               ? const Text('Hình ảnh')
               : FittedBox(
-                  child: Image.network(
-                    _imageUrlController.text,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+            child: Image.network(
+              _imageUrlController.text,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
         Expanded(
           child: buildImageURLField(),

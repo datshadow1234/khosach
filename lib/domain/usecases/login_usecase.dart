@@ -1,5 +1,4 @@
-import '../entities/auth_token_entity.dart';
-import '../repositories/login_repository.dart';
+import 'usecase_widget.dart';
 
 class LoginUseCase {
   final LoginRepository repository;

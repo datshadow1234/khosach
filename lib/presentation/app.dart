@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<LoginBloc>()),
         BlocProvider(create: (_) => sl<SignupBloc>()),
         BlocProvider(create: (_) => sl<ProductListBloc>()..add(FetchProductsEvent())),
+        BlocProvider(create: (_) => sl<AdminProductBloc>()),
         BlocProvider(create: (_) => sl<LogoutBloc>()),
         BlocProvider(create: (_) => sl<CartBloc>()..add(LoadCartEvent())),
         BlocProvider(create: (_) => sl<OrderBloc>()),
@@ -25,26 +26,15 @@ class MyApp extends StatelessWidget {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 locale: locale,
-                localizationsDelegates: const [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                supportedLocales: AppLocalizations.supportedLocales,
                 themeMode: themeMode,
-                theme: ThemeData(
-                  useMaterial3: true,
-                  colorSchemeSeed: Colors.deepPurple,
-                  brightness: Brightness.light,
-                ),
-                darkTheme: ThemeData(
-                  useMaterial3: true,
-                  brightness: Brightness.dark,
-                  colorSchemeSeed: Colors.deepPurple,
-                ),
+                theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple),
+                darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark, colorSchemeSeed: Colors.deepPurple),
                 routes: {
                   PaymentCartScreen1.routeName: (context) => const PaymentCartScreen1(),
+                  EditProductScreen.routeName: (context) {
+                    final args = ModalRoute.of(context)?.settings.arguments as ProductEntity?;
+                    return EditProductScreen(args);
+                  },
                 },
                 home: BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
@@ -53,9 +43,7 @@ class MyApp extends StatelessWidget {
                           ? const AdminMainScreen(title: 'Admin Panel')
                           : const UserMainScreen(title: 'Kho Sách');
                     }
-                    if (state is AuthUnauthenticated) {
-                      return const AuthScreen();
-                    }
+                    if (state is AuthUnauthenticated) return const AuthScreen();
                     return const SplashScreen();
                   },
                 ),

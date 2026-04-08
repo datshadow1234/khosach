@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import '../../../domain/entities/product_entity.dart';
-import 'product_grid_tile.dart';
+import 'product_widget.dart';
 
 class ProductsGrid extends StatelessWidget {
   final List<ProductEntity> products;

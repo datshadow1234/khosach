@@ -28,3 +28,8 @@ export '/../injection_container.dart';
 export '/../core/theme/theme_cubit.dart';
 export '/presentation/screens/auth/auth_screen.dart';
 export '/presentation/screens/splash_screen.dart';
+export 'admin/search_admin.dart';
+export 'admin/user_product_screen.dart';
+export 'package:shopbansach/presentation/screens/admin/edit_product_screen.dart';
+export '/../domain/entities/product_entity.dart';
+export '/presentation/blocs/admin_product_bloc/admin_product_bloc.dart';

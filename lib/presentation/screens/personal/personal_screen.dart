@@ -1,15 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/datasources/auth_local_data_source.dart';
-import '../../../domain/repositories/user_repository.dart';
-import '../../../injection_container.dart';
-import '../../blocs/auth_bloc/auth_bloc.dart';
-import '../../blocs/auth_bloc/auth_event.dart';
-import '../../blocs/user_bloc/user_bloc.dart';
-import '../../blocs/user_bloc/user_event.dart';
-import '../../blocs/user_bloc/user_state.dart';
-import '../shared/dialog_utils.dart';
-
+import 'personal_screen_widget.dart';
 class PersonalScreen extends StatefulWidget {
   static const routeName = '/personal';
 

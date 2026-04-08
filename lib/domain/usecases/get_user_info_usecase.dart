@@ -1,5 +1,4 @@
-import '../entities/user_entity.dart';
-import '../repositories/user_repository.dart';
+import 'usecase_widget.dart';
 
 class GetUserInfoUseCase {
   final UserRepository repository;

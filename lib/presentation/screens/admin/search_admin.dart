@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-// import 'package:shopcaycanh/ui/products/products_manager.dart';
-import '../../ui/products/products_manager.dart';
-
-import '../../models/product.dart';
-import 'edit_product_screen.dart';
+import 'admin_screen_widget.dart';
 
 class SearchAdminScreen extends StatefulWidget {
   static const routeName = '/search1';
@@ -15,34 +9,23 @@ class SearchAdminScreen extends StatefulWidget {
 }
 
 class _SearchAdminScreenState extends State<SearchAdminScreen> {
-  List<Product>? display_product = [];
   @override
   void initState() {
     super.initState();
-    setState(() {
-      final productsManager = context.read<ProductsManager>();
-      late List<Product> product = productsManager.items;
-      print("AAAAAAAAAAAAAAAAAAAA");
-      print(product.length);
-      // lay tu day de hien thi xuong listview
-      display_product = product;
-    });
+    context.read<AdminProductBloc>().add(FetchAdminProducts());
   }
 
   @override
   Widget build(BuildContext context) {
-    final productsManager = context.read<ProductsManager>();
-    final product = context.select<ProductsManager, List<Product>>(
-        (productsManager) => productsManager.display_product);
     return Scaffold(
         appBar: AppBar(
           title: const Text('Tìm kiếm - Admin'),
         ),
         body: Column(children: [
           TextField(
-            onChanged: (value) => setState(() {
-              context.read<ProductsManager>().updateList(value);
-            }),
+            onChanged: (value) {
+              context.read<AdminProductBloc>().add(SearchAdminProducts(value));
+            },
             decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
@@ -51,59 +34,69 @@ class _SearchAdminScreenState extends State<SearchAdminScreen> {
                   borderSide: BorderSide.none,
                 ),
                 hintText: "Tìm kiếm",
-                prefixIcon: Icon(Icons.search)),
+                prefixIcon: const Icon(Icons.search)),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           Expanded(
-              child: product!.length == 0
-                  ? const Center(
+            child: BlocBuilder<AdminProductBloc, AdminProductState>(
+              builder: (context, state) {
+                if (state is AdminProductLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state is AdminProductLoaded) {
+                  final products = state.displayProducts;
+                  if (products.isEmpty) {
+                    return const Center(
                       child: Text(
-                      '',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal),
-                    ))
-                  : ListView.builder(
-                      itemCount: productsManager.display_product_Count,
-                      itemBuilder: (context, index) => ListTile(
-                        onTap: () {
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) =>
-                          //         ProductDetailScreen(product[index])));
-                        },
-                        title: Text(
-                          product[index].title,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        subtitle: Text(
-                          '${product[index].price}',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        leading: CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(product[index].imageUrl),
-                        ),
-                        trailing: SizedBox(
-                          width: 100,
-                          child: Row(
-                            children: [
-                              buildEditButton(context, product[index]),
-                              buildDeleteButton(context, product[index]),
-                            ],
-                          ),
+                        '',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: products.length,
+                    itemBuilder: (context, index) => ListTile(
+                      onTap: () {},
+                      title: Text(
+                        products[index].title,
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                      subtitle: Text(
+                        '${products[index].price}',
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                      leading: CircleAvatar(
+                        backgroundImage:
+                        NetworkImage(products[index].imageUrl),
+                      ),
+                      trailing: SizedBox(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            buildEditButton(context, products[index]),
+                            buildDeleteButton(context, products[index]),
+                          ],
                         ),
                       ),
-                    ))
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
+          )
         ]));
   }
 
-  Widget buildEditButton(BuildContext context, product) {
+  Widget buildEditButton(BuildContext context, ProductEntity product) {
     return IconButton(
       onPressed: () async {
         Navigator.of(context).pushNamed(
           EditProductScreen.routeName,
-          arguments: product.id,
+          arguments: product,
         );
       },
       icon: const Icon(Icons.edit),
@@ -111,17 +104,17 @@ class _SearchAdminScreenState extends State<SearchAdminScreen> {
     );
   }
 
-    Widget buildDeleteButton(BuildContext context, product) {
+  Widget buildDeleteButton(BuildContext context, ProductEntity product) {
     return IconButton(
       onPressed: () {
-        context.read<ProductsManager>().deleteProduct(product.id!);
+        context.read<AdminProductBloc>().add(DeleteAdminProduct(product.id));
         ScaffoldMessenger.of(context)
           ..hideCurrentMaterialBanner()
           ..showSnackBar(const SnackBar(
               content: Text(
-            'Sản phẩm đã được xóa!',
-            textAlign: TextAlign.center,
-          )));
+                'Sản phẩm đã được xóa!',
+                textAlign: TextAlign.center,
+              )));
       },
       icon: const Icon(Icons.delete),
       color: Theme.of(context).colorScheme.error,
