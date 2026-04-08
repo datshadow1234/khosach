@@ -1,3 +1,7 @@
+import 'package:shopbansach/presentation/screens/personal_admin/personal_admin_screen.dart';
+
+import 'admin/search_admin.dart';
+import 'admin/user_product_screen.dart';
 import 'screen_widget.dart';
 class AdminMainScreen extends StatefulWidget {
   final String title;
@@ -11,6 +15,12 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
   int index = 0;
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final screens = [
+      const UserProductsScreen(),
+      const SearchAdminScreen(),
+      const PersonalAdminScreen(),
+    ];
     return BlocListener<LogoutBloc, LogoutState>(
       listener: (context, state) {
         if (state is LogoutSuccess) context.read<AuthBloc>().add(AuthLoggedOut());

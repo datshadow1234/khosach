@@ -33,12 +33,8 @@ mixin _$CartItemModel {
   @JsonKey(name: 'country')
   String get country => throw _privateConstructorUsedError;
 
-  /// Serializes this CartItemModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of CartItemModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $CartItemModelCopyWith<CartItemModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -72,8 +68,6 @@ class _$CartItemModelCopyWithImpl<$Res, $Val extends CartItemModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of CartItemModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -162,8 +156,6 @@ class __$$CartItemModelImplCopyWithImpl<$Res>
       _$CartItemModelImpl _value, $Res Function(_$CartItemModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CartItemModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -299,14 +291,12 @@ class _$CartItemModelImpl implements _CartItemModel {
             (identical(other.country, country) || other.country == country));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, productId, title, quantity,
       price, imageUrl, category, author, language, country);
 
-  /// Create a copy of CartItemModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$CartItemModelImplCopyWith<_$CartItemModelImpl> get copyWith =>
@@ -358,11 +348,8 @@ abstract class _CartItemModel implements CartItemModel {
   @override
   @JsonKey(name: 'country')
   String get country;
-
-  /// Create a copy of CartItemModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$CartItemModelImplCopyWith<_$CartItemModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

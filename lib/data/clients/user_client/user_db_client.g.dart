@@ -55,12 +55,17 @@ class _UserDbClient implements UserDbClient {
   }
 
   @override
-  Future<dynamic> getUserInfo(
-    String uid,
+  Future<dynamic> getUserWithQuery(
     String token,
+    String orderBy,
+    String equalTo,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'auth': token};
+    final queryParameters = <String, dynamic>{
+      r'auth': token,
+      r'orderBy': orderBy,
+      r'equalTo': equalTo,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<dynamic>(Options(
@@ -70,7 +75,7 @@ class _UserDbClient implements UserDbClient {
     )
         .compose(
           _dio.options,
-          '/users/${uid}.json',
+          '/users.json',
           queryParameters: queryParameters,
           data: _data,
         )

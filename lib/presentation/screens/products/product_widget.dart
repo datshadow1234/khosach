@@ -1,6 +1,6 @@
 export 'package:flutter/material.dart';
 export 'package:flutter_bloc/flutter_bloc.dart';
-export 'package:flutter_gen/gen_l10n/app_localizations.dart';
+export '../../../l10n/app_localizations.dart';
 export '../../../domain/entities/product_entity.dart';
 export '../../../domain/entities/cart_item_entity.dart';
 export '../../blocs/cart_bloc/cart_bloc.dart';

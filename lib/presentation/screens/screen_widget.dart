@@ -5,7 +5,7 @@ export '../blocs/auth_bloc/auth_event.dart';
 export '../blocs/logout_bloc/logout_bloc.dart';
 export '../blocs/logout_bloc/logout_event.dart';
 export '../blocs/logout_bloc/logout_state.dart';
-export 'package:flutter_gen/gen_l10n/app_localizations.dart';
+export '../../../l10n/app_localizations.dart';
 export 'package:shopbansach/presentation/screens/personal/personal_screen.dart';
 export 'package:shopbansach/presentation/screens/products/product_overview_screen.dart';
 export '../blocs/cart_bloc/cart_bloc.dart';

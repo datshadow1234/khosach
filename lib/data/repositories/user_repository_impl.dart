@@ -27,24 +27,20 @@ class UserRepositoryImpl implements UserRepository {
       },
     );
   }
-
   @override
   Future<UserEntity> getUserInfo(String uid, String token) async {
     try {
-      final response = await userDbClient.getUserInfo(uid, token);
-      if (response == null) {
+      final response = await userDbClient.getUserWithQuery(token, '"uid"', '"$uid"');
+
+      if (response.isEmpty) {
         return UserEntity(
-          uid: uid,
-          imageUrl: '',
-          email: 'Chưa cập nhật',
-          name: 'Khách hàng',
-          phone: 'Chưa có SĐT',
-          address: 'Chưa cập nhật địa chỉ giao hàng',
-          role: 'user',
+          uid: uid, imageUrl: '', email: 'Chưa cập nhật',
+          name: 'Khách hàng', phone: 'Chưa có SĐT',
+          address: 'Chưa cập nhật', role: 'user',
         );
       }
-
-      final model = UserModel.fromJson(Map<String, dynamic>.from(response));
+      final userData = Map<String, dynamic>.from(response.values.first);
+      final model = UserModel.fromJson(userData);
       return UserModel.toEntity(model);
 
     } catch (e) {
@@ -55,11 +51,18 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<String> getUserRole(String uid, String token) async {
     try {
-      final response = await userDbClient.getUserInfo(uid, token);
-      if (response == null) return 'user';
-      return response['role'] ?? 'user';
+      final response = await userDbClient.getUserWithQuery(token, '"uid"', '"$uid"');
+
+      if (response.isNotEmpty) {
+        final userData = response.values.first;
+
+        final role = userData['role']?.toString().toLowerCase().trim() ?? 'user';
+        debugPrint("--- QUYỀN HẠN TÌM THẤY: $role ---");
+        return role;
+      }
     } catch (e) {
-      return 'user';
+      debugPrint("Lỗi lấy role: $e");
     }
+    return 'user';
   }
 }

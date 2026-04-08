@@ -37,7 +37,7 @@ class _CartClient implements CartClient {
     )
         .compose(
           _dio.options,
-          '/carts/${uid}.g.json',
+          '/carts/${uid}.json',
           queryParameters: queryParameters,
           data: _data,
         )

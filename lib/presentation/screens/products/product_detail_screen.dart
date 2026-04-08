@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../domain/entities/product_entity.dart';
-import '../../../domain/entities/cart_item_entity.dart';
-import '../../blocs/cart_bloc/cart_bloc.dart';
-import '../../blocs/cart_bloc/cart_event.dart';
+import 'product_widget.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   static const routeName = '/product-detail';

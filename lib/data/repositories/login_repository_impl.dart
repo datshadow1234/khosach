@@ -13,13 +13,18 @@ class LoginRepositoryImpl implements LoginRepository {
     final res = await authClient.signIn(_apiKey, {'email': email, 'password': password, 'returnSecureToken': true});
     return AuthTokenEntity(token: res.token, userId: res.userId, expiryDate: DateTime.now().add(Duration(seconds: int.parse(res.expiresIn))));
   }
-
   @override
   Future<String> getUserRole(String uid, String token) async {
     try {
-      final data = await userDbClient.getUserInfo(uid, token);
-      if (data != null && data['role'] != null) return data['role'];
-    } catch (_) {}
+      final data = await userDbClient.getUserWithQuery(token, '"uid"', '"$uid"');
+
+      if (data.isNotEmpty) {
+        final userValues = data.values.first;
+        return userValues['role']?.toString().toLowerCase() ?? 'user';
+      }
+    } catch (e) {
+      print("Lỗi LoginRepository getUserRole: $e");
+    }
     return 'user';
   }
 

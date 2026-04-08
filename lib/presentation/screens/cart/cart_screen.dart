@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../blocs/cart_bloc/cart_bloc.dart';
-import '../../blocs/cart_bloc/cart_state.dart';
-import '../payment_cart/payment_cart_screen.dart';
-import 'cart_item_card.dart';
+import 'cart_screen_widget.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
