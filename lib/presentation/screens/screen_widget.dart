@@ -33,3 +33,5 @@ export 'admin/user_product_screen.dart';
 export 'package:shopbansach/presentation/screens/admin/edit_product_screen.dart';
 export '/../domain/entities/product_entity.dart';
 export '/presentation/blocs/admin_product_bloc/admin_product_bloc.dart';
+export 'package:shopbansach/presentation/screens/personal_admin/personal_admin_screen.dart';
+export '/presentation/blocs/admin_profile_bloc/admin_profile_bloc.dart';

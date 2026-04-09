@@ -10,3 +10,4 @@ export '../repositories/logout_repository.dart';
 export '../repositories/login_repository.dart';
 export '../entities/user_entity.dart';
 export '../repositories/user_repository.dart';
+export '../repositories/admin_repository.dart';

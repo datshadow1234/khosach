@@ -1,3 +1,4 @@
+
 import 'screen_widget.dart';
 class AdminMainScreen extends StatefulWidget {
   final String title;
@@ -15,6 +16,7 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
     final screens = [
       const UserProductsScreen(),
       const SearchAdminScreen(),
+      const PersonalAdminScreen(),
     ];
 
     return BlocListener<LogoutBloc, LogoutState>(
@@ -22,15 +24,6 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
         if (state is LogoutSuccess) context.read<AuthBloc>().add(AuthLoggedOut());
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () => context.read<LogoutBloc>().add(LogoutSubmitted()),
-            )
-          ],
-        ),
         body: IndexedStack(
           index: index,
           children: screens,

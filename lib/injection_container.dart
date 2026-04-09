@@ -1,6 +1,5 @@
 import '/core/widgets/widget.dart';
 
-
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -13,7 +12,6 @@ Future<void> init() async {
     receiveTimeout: const Duration(seconds: 15),
   )));
 
-  // Data Sources
   sl.registerLazySingleton<AuthLocalDataSource>(() => AuthLocalDataSourceImpl(sharedPreferences: sl()));
   sl.registerLazySingleton(() => CartClient(sl()));
   sl.registerLazySingleton(() => AuthClient(sl()));
@@ -21,7 +19,6 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ProductClient(sl()));
   sl.registerLazySingleton(() => OrderClient(sl()));
 
-  // Repositories
   sl.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<SearchRepository>(() => SearchRepositoryImpl());
   sl.registerLazySingleton<CartRepository>(() => CartRepositoryImpl(cartClient: sl(), authLocalDataSource: sl()));
@@ -32,7 +29,6 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SignupRepositoryImpl(authClient: sl(), userDbClient: sl(), localDataSource: sl()));
   sl.registerLazySingleton(() => LogoutRepositoryImpl(localDataSource: sl()));
 
-  // UseCases - User
   sl.registerLazySingleton(() => GetProductsUseCase(repository: sl<ProductRepository>()));
   sl.registerLazySingleton(() => SearchProductsUseCase(repository: sl<SearchRepository>()));
   sl.registerLazySingleton(() => GetCartUseCase(repository: sl<CartRepository>()));
@@ -69,4 +65,15 @@ Future<void> init() async {
     updateProductUseCase: sl(),
     deleteProductUseCase: sl(),
   ));
+  sl.registerLazySingleton(() => AdminDbClient(sl()));
+  sl.registerLazySingleton<AdminRepository>(() => AdminRepositoryImpl(adminDbClient: sl()),);
+
+  sl.registerLazySingleton(() => GetAdminProfileUseCase(sl()));
+  sl.registerLazySingleton(() => AdminUpdateInfoUseCase(sl()));
+
+  sl.registerFactory(() => AdminProfileBloc(
+      getAdminProfileUseCase: sl(),
+      adminUpdateInfoUseCase: sl(),
+    ),
+  );
 }

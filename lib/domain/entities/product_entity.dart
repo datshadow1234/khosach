@@ -6,7 +6,7 @@ class ProductEntity extends Equatable {
   final String category;
   final String author;
   final String language;
-  final String coutry; // Giữ nguyên lỗi chính tả 'coutry' giống code cũ của bạn
+  final String coutry;
   final String description;
   final double price;
   final String imageUrl;
@@ -23,7 +23,6 @@ class ProductEntity extends Equatable {
     required this.imageUrl,
   });
 
-  // --- THÊM HÀM NÀY VÀO ---
   ProductEntity copyWith({
     String? id,
     String? title,

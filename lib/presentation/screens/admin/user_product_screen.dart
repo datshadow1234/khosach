@@ -1,3 +1,5 @@
+import '../../blocs/logout_bloc/logout_bloc.dart';
+import '../../blocs/logout_bloc/logout_event.dart';
 import 'admin_screen_widget.dart';
 
 class UserProductsScreen extends StatefulWidget {
@@ -71,13 +73,27 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
   }
 
   Widget buildAddButton(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed(
-            EditProductScreen.routeName,
-          );
-        },
-        icon: const Icon(Icons.add));
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context).pushNamed(
+              EditProductScreen.routeName,
+            );
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: () {
+            context.read<LogoutBloc>().add(
+              LogoutSubmitted(),
+            );
+          },
+        ),
+      ],
+    );
   }
 
   Widget buildUserProductListView(List products) {

@@ -18,6 +18,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<CartBloc>()..add(LoadCartEvent())),
         BlocProvider(create: (_) => sl<OrderBloc>()),
         BlocProvider(create: (_) => sl<UserBloc>()),
+        BlocProvider(create: (_) => sl<AdminProfileBloc>()),
+
       ],
       child: BlocBuilder<LanguageCubit, Locale>(
         builder: (context, locale) {
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 locale: locale,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
                 themeMode: themeMode,
                 theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.deepPurple),
                 darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark, colorSchemeSeed: Colors.deepPurple),
