@@ -53,8 +53,8 @@ class _OrderClient implements OrderClient {
   @override
   Future<dynamic> getOrders(
     String token,
-    String orderBy,
-    String uid,
+    String? orderBy,
+    String? uid,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -62,6 +62,7 @@ class _OrderClient implements OrderClient {
       r'orderBy': orderBy,
       r'equalTo': uid,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<dynamic>(Options(

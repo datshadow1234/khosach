@@ -35,3 +35,5 @@ export '/../domain/entities/product_entity.dart';
 export '/presentation/blocs/admin_product_bloc/admin_product_bloc.dart';
 export 'package:shopbansach/presentation/screens/personal_admin/personal_admin_screen.dart';
 export '/presentation/blocs/admin_profile_bloc/admin_profile_bloc.dart';
+export '/presentation/blocs/statistic_bloc/statistic_bloc.dart';
+export 'package:shopbansach/presentation/screens/statistic/statistic_screen.dart';

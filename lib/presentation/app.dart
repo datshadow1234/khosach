@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<OrderBloc>()),
         BlocProvider(create: (_) => sl<UserBloc>()),
         BlocProvider(create: (_) => sl<AdminProfileBloc>()),
-
+        BlocProvider(create: (_) => sl<StatisticBloc>()),
       ],
       child: BlocBuilder<LanguageCubit, Locale>(
         builder: (context, locale) {

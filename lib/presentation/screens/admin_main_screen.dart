@@ -1,4 +1,3 @@
-
 import 'screen_widget.dart';
 class AdminMainScreen extends StatefulWidget {
   final String title;
@@ -16,6 +15,7 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
     final screens = [
       const UserProductsScreen(),
       const SearchAdminScreen(),
+      const StatisticScreen(),
       const PersonalAdminScreen(),
     ];
 
@@ -34,6 +34,7 @@ class _AdminMainScreenState extends State<AdminMainScreen> {
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home), label: "Admin"),
             NavigationDestination(icon: Icon(Icons.search), label: "Tìm kiếm"),
+            NavigationDestination(icon: Icon(Icons.bar_chart), label: "Thống kê"),
             NavigationDestination(icon: Icon(Icons.account_circle_outlined), label: "Cá nhân"),
           ],
         ),

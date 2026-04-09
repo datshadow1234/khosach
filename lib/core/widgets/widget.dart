@@ -49,3 +49,6 @@ export '/data/repositories/admin_repository_impl.dart';
 export '/domain/repositories/admin_repository.dart';
 export '/domain/usecases/admin_update_info_usecase.dart';
 export '/domain/usecases/get_admin_profile_usecase.dart';
+export 'package:shopbansach/presentation/blocs/statistic_bloc/statistic_bloc.dart';
+export '/data/repositories/statistic_repository_impl.dart';
+export '/domain/repositories/statistic_repository.dart';

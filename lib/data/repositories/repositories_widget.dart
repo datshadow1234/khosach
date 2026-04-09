@@ -26,3 +26,5 @@ export '../models/user_model/user_model.dart';
 export '../../presentation/screens/auth/auth_screen_widget.dart';
 export '../../domain/repositories/admin_repository.dart';
 export '../clients/admin_db_client/admin_db_client.dart';
+export '../../domain/entities/statistic_entity.dart';
+export '../../domain/repositories/statistic_repository.dart';

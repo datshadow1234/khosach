@@ -21,7 +21,10 @@ Future<void> init() async {
 
   sl.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<SearchRepository>(() => SearchRepositoryImpl());
-  sl.registerLazySingleton<CartRepository>(() => CartRepositoryImpl(cartClient: sl(), authLocalDataSource: sl()));
+  sl.registerFactory<CartRepository>(() => CartRepositoryImpl(
+    cartClient: sl(),
+    authLocalDataSource: sl(),
+  ));
   sl.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(orderClient: sl()));
   sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(userDbClient: sl()));
   sl.registerLazySingleton(() => AuthRepositoryImpl(localDataSource: sl()));
@@ -55,6 +58,7 @@ Future<void> init() async {
     removeCartUseCase: sl(),
     clearCartUseCase: sl(),
   ));
+
   sl.registerFactory(() => OrderBloc(addOrderUseCase: sl(), getOrdersUseCase: sl()));
   sl.registerFactory(() => UserBloc(getUserInfoUseCase: sl()));
   sl.registerFactory(() => LogoutBloc(repository: sl<LogoutRepositoryImpl>()));
@@ -76,4 +80,10 @@ Future<void> init() async {
       adminUpdateInfoUseCase: sl(),
     ),
   );
+  sl.registerLazySingleton<StatisticRepository>(
+        () => StatisticRepositoryImpl(orderClient: sl<OrderClient>()),
+  );
+
+  // Blocs
+  sl.registerFactory(() => StatisticBloc(repository: sl<StatisticRepository>()));
 }

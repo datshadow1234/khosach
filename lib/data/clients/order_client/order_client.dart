@@ -16,7 +16,7 @@ abstract class OrderClient {
   @GET("/orders.json")
   Future<dynamic> getOrders(
       @Query("auth") String token,
-      @Query("orderBy") String orderBy,
-      @Query("equalTo") String uid,
+      @Query("orderBy") String? orderBy,
+      @Query("equalTo") String? uid,
       );
 }

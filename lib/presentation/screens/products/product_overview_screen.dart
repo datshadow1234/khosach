@@ -6,12 +6,25 @@ class ProductsOverviewScreen extends StatefulWidget {
   @override
   State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
 }
-
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
     context.read<ProductListBloc>().add(FetchProductsEvent());
+  }
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      context.read<ProductListBloc>().add(SearchProductsEvent(query));
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -33,12 +46,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             ],
           ),
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SearchScreen()),
-            ),
-          ),
-          IconButton(
             icon: const Icon(Icons.brightness_6),
             onPressed: () => context.read<ThemeCubit>().toggleTheme(),
           ),
@@ -48,42 +55,44 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           )
         ],
       ),
-      body: BlocBuilder<ProductListBloc, ProductListState>(
-        builder: (context, state) {
-          if (state is ProductListLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SearchBar(
+              hintText: 'Nhập tên sách...',
+              leading: const Icon(Icons.search),
+              onChanged: _onSearchChanged,
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<ProductListBloc, ProductListState>(
+              builder: (context, state) {
+                if (state is ProductListLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-          if (state is ProductListLoaded) {
-            return ProductsGrid(products: state.displayProducts);
-          }
+                if (state is ProductListLoaded) {
+                  if (state.displayProducts.isEmpty) {
+                    return const Center(child: Text("Không tìm thấy sách."));
+                  }
+                  return ProductsGrid(products: state.displayProducts);
+                }
 
-          if (state is ProductListError) {
-            return Center(
-              child: Text(state.message),
-            );
-          }
+                if (state is ProductListError) {
+                  return Center(
+                    child: Text(state.message),
+                  );
+                }
 
-          return const SizedBox();
-        },
+                return const SizedBox();
+              },
+            ),
+          ),
+        ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.of(context).pushNamed(ChatbotScreen1.routeName);
-      //   },
-      //   child: const Icon(Icons.message),
-      // ),
-    );
-  }
-
-  Widget searchProduct() {
-    return IconButton(
-      onPressed: () {
-        Navigator.of(context).pushNamed(SearchScreen.routeName);
-      },
-      icon: const Icon(Icons.search),
     );
   }
 }
