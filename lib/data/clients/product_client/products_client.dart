@@ -8,7 +8,9 @@ abstract class ProductClient {
   factory ProductClient(Dio dio, {String? baseUrl}) = _ProductClient;
 
   @GET('/products.json')
-  Future<dynamic> getProducts(@Query('auth') String token);
+  Future<dynamic> getProducts(
+      @Query('auth') String token,
+      );
 
   @POST('/products.json')
   Future<dynamic> addProduct(

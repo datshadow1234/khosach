@@ -19,8 +19,6 @@ class AdminModel with _$AdminModel {
   }) = _AdminModel;
 
   factory AdminModel.fromJson(Map<String, dynamic> json) => _$AdminModelFromJson(json);
-
-  // Dùng riêng cho Admin
   UserEntity toEntity() {
     return UserEntity(
       uid: uid,

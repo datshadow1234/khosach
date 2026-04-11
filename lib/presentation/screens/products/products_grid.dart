@@ -1,4 +1,4 @@
-import 'product_widget.dart';
+import 'product.dart';
 
 class ProductsGrid extends StatelessWidget {
   final List<ProductEntity> products;

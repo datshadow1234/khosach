@@ -1,4 +1,4 @@
-import 'admin_product_bloc_widget.dart';
+import 'admin_product.dart';
 
   abstract class AdminProductEvent extends Equatable {
   @override

@@ -9,6 +9,7 @@ class OrderModel with _$OrderModel {
   const factory OrderModel({
     String? id,
     @Default(0.0) double amount,
+    @Default(0.0) double shippingFee,
     @Default([]) List<Map<String, dynamic>> products,
     @Default(0) int totalQuantity,
     @Default('') String name,

@@ -1,4 +1,4 @@
-import 'user_bloc_widget.dart';
+import 'user.dart';
 abstract class UserState extends Equatable {
   const UserState();
 

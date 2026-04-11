@@ -1,4 +1,4 @@
-import 'product_widget.dart';
+import 'product.dart';
 
 class ProductsOverviewScreen extends StatefulWidget {
   const ProductsOverviewScreen({super.key});

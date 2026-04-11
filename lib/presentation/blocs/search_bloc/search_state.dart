@@ -1,4 +1,4 @@
-import 'search_bloc_widget.dart';
+import 'search.dart';
 
 abstract class SearchState {}
 

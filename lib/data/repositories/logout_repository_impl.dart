@@ -1,4 +1,4 @@
-import 'repositories_widget.dart';
+import 'repositories.dart';
 
 class LogoutRepositoryImpl implements LogoutRepository {
   final AuthLocalDataSource localDataSource;

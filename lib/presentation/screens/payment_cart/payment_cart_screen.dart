@@ -1,266 +1,159 @@
-import 'payment_widget.dart';
+import '../admin/admin.dart';
+import 'payment.dart';
 
-class PaymentCartScreen1 extends StatefulWidget {
+class PaymentCartScreen1 extends HookWidget {
   static const routeName = '/payment-cart1';
-
   const PaymentCartScreen1({super.key});
 
   @override
-  State<PaymentCartScreen1> createState() => _PaymentCartScreen1State();
-}
-
-class _PaymentCartScreen1State extends State<PaymentCartScreen1> {
-  final String payResult = "Thanh toán bằng tiền mặt";
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserData();
-  }
-
-  void _loadUserData() {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is AuthAuthenticated) {
-      context.read<UserBloc>().add(
-        FetchUserInfoEvent(
-          uid: authState.authToken.userId,
-          token: authState.authToken.token,
-        ),
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    const double shippingFee = 30000;
+    const String payResult = "Thanh toán bằng tiền mặt";
+
+    useEffect(() {
+      final authState = BlocProvider.of<AuthBloc>(context).state;
+      if (authState is AuthAuthenticated) {
+        BlocProvider.of<UserBloc>(context).add(
+          FetchUserInfoEvent(
+            uid: authState.authToken.userId,
+            token: authState.authToken.token!,
+          ),
+        );
+      }
+      return null;
+    }, []);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Trang thanh toán'),
-      ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text('Thanh toán'), elevation: 0),
       body: BlocListener<OrderBloc, OrderState>(
         listener: (context, state) {
           if (state is OrderLoading) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (_) => const Center(child: CircularProgressIndicator()),
-            );
+            showDialog(context: context, builder: (_) => const Center(child: CircularProgressIndicator()));
           } else if (state is OrderSuccess) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Đặt hàng thành công!")),
-            );
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Đặt hàng thành công!")));
             Navigator.of(context).popUntil((route) => route.isFirst);
           } else if (state is OrderError) {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Lỗi: ${state.message}")),
-            );
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Lỗi: ${state.message}")));
           }
         },
         child: BlocBuilder<UserBloc, UserState>(
           builder: (context, userState) {
-            if (userState is UserLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            if (userState is UserLoading) return const Center(child: CircularProgressIndicator());
+            if (userState is! UserLoaded) return const Center(child: Text("Lỗi tải thông tin"));
 
-            if (userState is UserLoaded) {
-              final user = userState.user;
+            final user = userState.user;
 
-              return BlocBuilder<CartBloc, CartState>(
-                builder: (context, cartState) {
-                  if (cartState is CartLoaded) {
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.only(bottom: 30),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            return BlocBuilder<CartBloc, CartState>(
+              builder: (context, cartState) {
+                if (cartState is! CartLoaded) return const Center(child: Text("Giỏ hàng trống"));
+
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.all(16),
                         children: [
-                          const SizedBox(height: 20),
-                          paymentAddress(user.address),
-                          inforNameUser(user.name),
-                          inforPhoneUser(user.phone),
-                          const Divider(height: 30, thickness: 1),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15),
-                            child: Text(
-                              "Danh sách sản phẩm",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: cartState.items.length,
-                            itemBuilder: (ctx, i) {
-                              final item = cartState.items[i];
-                              return CartItemCard(
-                                productId: item.productId,
-                                cardItem: item,
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                          buildProductTotal(cartState),
-                          const SizedBox(height: 20),
-                          paymentNow(user, cartState),
+                          _buildSectionTitle('Thông tin nhận hàng'),
+                          _infoTile(Icons.person_outline, 'Người nhận', user.name),
+                          _infoTile(Icons.phone_iphone, 'Số điện thoại', user.phone),
+                          _infoTile(Icons.location_on_outlined, 'Địa chỉ', user.address),
+                          const Divider(height: 40),
+                          _buildSectionTitle('Sản phẩm đã chọn'),
+                          ...cartState.items.map((item) => CartItemCard(productId: item.productId, cardItem: item)),
                         ],
                       ),
-                    );
-                  }
-                  return const Center(child: Text("Giỏ hàng đang trống"));
-                },
-              );
-            }
-
-            if (userState is UserError) {
-              return Center(child: Text("Lỗi tải thông tin: ${userState.message}"));
-            }
-
-            return const SizedBox();
+                    ),
+                    _buildBottomSummary(context, cartState, user, shippingFee, payResult),
+                  ],
+                );
+              },
+            );
           },
         ),
       ),
     );
   }
 
-  Widget paymentAddress(String data) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(left: 15, bottom: 5),
-          child: Text(
-            'Địa chỉ giao hàng',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Container(
-          width: double.infinity,
-          margin: const EdgeInsets.symmetric(horizontal: 15),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-          child: Text(data, style: const TextStyle(fontSize: 15)),
-        ),
-      ],
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
     );
   }
 
-  Widget inforNameUser(String data) {
-    return ListTile(
-      leading: const Icon(Icons.person, color: Colors.blue),
-      title: const Text('Người mua'),
-      subtitle: Text(data,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-    );
-  }
-
-  Widget inforPhoneUser(String data) {
-    return ListTile(
-      leading: const Icon(Icons.phone, color: Colors.green),
-      title: const Text('Số điện thoại'),
-      subtitle: Text(data,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-    );
-  }
-
-  Widget buildProductTotal(CartLoaded cart) {
-    return Container(
-      margin: const EdgeInsets.all(15),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
+  Widget _infoTile(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
         children: [
-          CustomRowText(
-            title: 'Tổng số lượng items',
-            value: '${cart.totalQuantity}',
-          ),
-          const Divider(),
-          CustomRowText(
-            title: 'Tổng thanh toán',
-            value: '${cart.totalAmount} đ',
-          ),
+          Icon(icon, size: 20, color: Colors.blueGrey),
+          const SizedBox(width: 12),
+          Text('$label:', style: const TextStyle(color: Colors.grey)),
+          const SizedBox(width: 8),
+          Expanded(child: Text(value, style: const TextStyle(fontWeight: FontWeight.w500))),
         ],
       ),
     );
   }
 
-  Widget paymentNow(dynamic user, CartLoaded cart) {
+  Widget _buildBottomSummary(BuildContext context, CartLoaded cart, dynamic user, double ship, String payType) {
+    final double finalTotal = cart.totalAmount + ship;
+
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.redAccent,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          elevation: 5,
-        ),
-        onPressed: () {
-          final authState = context.read<AuthBloc>().state;
-          if (authState is AuthAuthenticated) {
-            final order = OrderEntity(
-              amount: cart.totalAmount,
-              products: cart.items,
-              totalQuantity: cart.totalQuantity,
-              name: user.name,
-              phone: user.phone,
-              address: user.address,
-              customerId: user.uid,
-              payResult: payResult,
-              dateTime: DateTime.now(),
-            );
-
-            context.read<OrderBloc>().add(
-              AddOrderEvent(order, authState.authToken.token),
-            );
-          }
-        },
-        child: const Text(
-          'XÁC NHẬN THANH TOÁN TIỀN MẶT',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
       ),
-    );
-  }
-}
-
-class CustomRowText extends StatelessWidget {
-  final String title;
-  final String value;
-
-  const CustomRowText({
-    super.key,
-    required this.title,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title, style: const TextStyle(fontSize: 16)),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.red,
+          _rowPrice('Tiền hàng', '${cart.totalAmount} đ'),
+          _rowPrice('Phí vận chuyển', '${ship} đ'),
+          const Divider(height: 20),
+          _rowPrice('Tổng thanh toán', '${finalTotal} đ', isBold: true),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+              onPressed: () {
+                final authState = BlocProvider.of<AuthBloc>(context).state;
+                if (authState is AuthAuthenticated) {
+                  final order = OrderEntity(
+                    shippingFee: ship,
+                    amount: finalTotal,
+                    products: cart.items,
+                    totalQuantity: cart.totalQuantity,
+                    name: user.name,
+                    phone: user.phone,
+                    address: user.address,
+                    customerId: user.uid,
+                    payResult: payType,
+                    dateTime: DateTime.now(),
+                  );
+                  BlocProvider.of<OrderBloc>(context).add(AddOrderEvent(order, authState.authToken.token!));
+                }
+              },
+              child: const Text('XÁC NHẬN ĐẶT HÀNG', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _rowPrice(String label, String value, {bool isBold = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: TextStyle(fontSize: isBold ? 16 : 14, fontWeight: isBold ? FontWeight.bold : null)),
+        Text(value, style: TextStyle(fontSize: isBold ? 18 : 14, fontWeight: isBold ? FontWeight.bold : null, color: isBold ? Colors.red : null)),
+      ],
     );
   }
 }

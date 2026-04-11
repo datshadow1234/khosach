@@ -1,4 +1,4 @@
-import 'user_bloc_widget.dart';
+import 'user.dart';
 class UserBloc extends Bloc<UserEvent, UserState> {
   final GetUserInfoUseCase getUserInfoUseCase;
 

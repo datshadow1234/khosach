@@ -1,4 +1,4 @@
-import 'logout_bloc_widget.dart';
+import 'logout.dart';
 
 class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
   final LogoutRepository repository;

@@ -1,10 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+
 part 'admin_db_client.g.dart';
 
-@RestApi(baseUrl: "https://bookstore-project-f0504-default-rtdb.asia-southeast1.firebasedatabase.app")
+@RestApi()
 abstract class AdminDbClient {
   factory AdminDbClient(Dio dio, {String baseUrl}) = _AdminDbClient;
+
+  @GET("/users/{uid}.json")
+  Future<dynamic> getAdminDirect(
+      @Path("uid") String uid,
+      @Query("auth") String token,
+      );
 
   @GET("/users.json")
   Future<dynamic> getAdminWithQuery(
@@ -13,9 +20,9 @@ abstract class AdminDbClient {
       @Query("equalTo") String equalTo,
       );
 
-  @PATCH("/users/{firebaseUrl}.json")
+  @PATCH("/users/{uid}.json")
   Future<void> updateAdminInfo(
-      @Path("firebaseUrl") String firebaseUrl,
+      @Path("uid") String uid,
       @Query("auth") String token,
       @Body() Map<String, dynamic> body,
       );
@@ -25,9 +32,9 @@ abstract class AdminDbClient {
       @Query("auth") String token,
       );
 
-  @DELETE("/users/{firebaseUrl}.json")
+  @DELETE("/users/{uid}.json")
   Future<void> deleteUser(
-      @Path("firebaseUrl") String firebaseUrl,
+      @Path("uid") String uid,
       @Query("auth") String token,
       );
 }

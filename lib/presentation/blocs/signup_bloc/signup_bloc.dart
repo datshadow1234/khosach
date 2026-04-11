@@ -1,4 +1,4 @@
-import 'signup_bloc_widget.dart';
+import 'signup.dart';
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
   final SignupRepository repository;
 

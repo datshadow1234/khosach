@@ -1,4 +1,4 @@
-import 'usecase_widget.dart';
+import 'usecase.dart';
 
 class GetUserInfoUseCase {
   final UserRepository repository;

@@ -1,4 +1,4 @@
-import 'admin_bloc_widget.dart';
+import 'admin_bloc.dart';
 
 class AdminProfileBloc extends Bloc<AdminProfileEvent, AdminProfileState> {
   final GetAdminProfileUseCase getAdminProfileUseCase;

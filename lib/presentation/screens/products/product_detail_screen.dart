@@ -1,4 +1,4 @@
-import 'product_widget.dart';
+import 'product.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   static const routeName = '/product-detail';

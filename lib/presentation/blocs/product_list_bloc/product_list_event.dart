@@ -1,4 +1,4 @@
-import 'product_list_bloc_widget.dart';
+import 'product_list.dart';
 abstract class ProductListEvent {}
 
 class FetchProductsEvent extends ProductListEvent {}

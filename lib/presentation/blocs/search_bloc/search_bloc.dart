@@ -1,4 +1,4 @@
-import 'search_bloc_widget.dart';
+import 'search.dart';
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final SearchProductsUseCase searchProductsUseCase;
   final ProductListBloc productListBloc;

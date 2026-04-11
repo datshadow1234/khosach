@@ -1,4 +1,4 @@
-import 'repositories_widget.dart';
+import 'repositories.dart';
 
 class OrderRepositoryImpl implements OrderRepository {
   final OrderClient orderClient;
@@ -21,24 +21,27 @@ class OrderRepositoryImpl implements OrderRepository {
       '"$uid"',
     );
 
-    if (response == null) return [];
+    if (response == null || response.isEmpty) return [];
 
-    final Map<String, dynamic> data = Map<String, dynamic>.from(response as Map);
-    List<OrderEntity> validOrders = [];
+    final Map<String, dynamic> data = Map<String, dynamic>.from(response);
+    final List<OrderEntity> validOrders = [];
 
     for (var e in data.entries) {
       try {
         final model = OrderModel.fromJson(
-          Map<String, dynamic>.from(e.value as Map),
+          Map<String, dynamic>.from(e.value),
         );
 
-        final products = model.products
-            .map<CartItemEntity>((p) => CartItemEntity.fromJson(Map<String, dynamic>.from(p as Map)))
+        final products = (model.products as List)
+            .map<CartItemEntity>(
+              (p) => CartItemEntity.fromJson(Map<String, dynamic>.from(p as Map)),
+        )
             .toList();
 
         validOrders.add(OrderEntity(
           id: e.key,
           amount: model.amount,
+          shippingFee: model.shippingFee,
           products: products,
           totalQuantity: model.totalQuantity,
           name: model.name,
@@ -48,12 +51,10 @@ class OrderRepositoryImpl implements OrderRepository {
           payResult: model.payResult,
           dateTime: DateTime.parse(model.dateTime),
         ));
-      } catch (error) {
-        debugPrint('Lỗi parse đơn hàng ID ${e.key}: $error');
-      }
+      } catch (_) {}
     }
-    validOrders.sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
+    validOrders.sort((a, b) => b.dateTime.compareTo(a.dateTime));
     return validOrders;
   }
 }

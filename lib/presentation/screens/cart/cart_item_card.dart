@@ -1,4 +1,4 @@
-import 'cart_screen_widget.dart';
+import 'cart.dart';
 
 class CartItemCard extends StatefulWidget {
   final String productId;

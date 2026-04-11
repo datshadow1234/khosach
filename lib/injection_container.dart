@@ -6,11 +6,19 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
 
-  sl.registerLazySingleton(() => Dio(BaseOptions(
+  final authDio = Dio(BaseOptions(
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 15),
+  ));
+
+  final dbDio = Dio(BaseOptions(
     baseUrl: dotenv.env['FIREBASE_URL'] ?? '',
     connectTimeout: const Duration(seconds: 15),
     receiveTimeout: const Duration(seconds: 15),
-  )));
+  ));
+
+  sl.registerLazySingleton<Dio>(() => dbDio);
+  sl.registerLazySingleton<Dio>(() => authDio, instanceName: 'authDio');
 
   sl.registerLazySingleton<AuthLocalDataSource>(() => AuthLocalDataSourceImpl(sharedPreferences: sl()));
   sl.registerLazySingleton(() => CartClient(sl()));
@@ -84,6 +92,5 @@ Future<void> init() async {
         () => StatisticRepositoryImpl(orderClient: sl<OrderClient>()),
   );
 
-  // Blocs
   sl.registerFactory(() => StatisticBloc(repository: sl<StatisticRepository>()));
 }

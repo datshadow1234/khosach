@@ -1,4 +1,4 @@
-import 'product_widget.dart';
+import 'product.dart';
 
 class SearchScreen extends StatefulWidget {
   static const routeName = '/search';

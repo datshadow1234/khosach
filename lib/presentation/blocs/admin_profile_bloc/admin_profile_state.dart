@@ -1,4 +1,4 @@
-import 'admin_bloc_widget.dart';
+import 'admin_bloc.dart';
 
 abstract class AdminProfileState extends Equatable {
   const AdminProfileState();

@@ -1,4 +1,4 @@
-import 'cart_bloc_widget.dart';
+import 'cart.dart';
 
 abstract class CartEvent extends Equatable {
   const CartEvent();

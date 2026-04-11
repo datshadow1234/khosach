@@ -1,4 +1,4 @@
-import 'repositories_widget.dart';
+import 'repositories.dart';
 
 class CartRepositoryImpl implements CartRepository {
   final CartClient cartClient;
@@ -54,12 +54,11 @@ class CartRepositoryImpl implements CartRepository {
 
       if (response != null) {
         response.forEach((key, value) {
-          _items[key] = _mapModelToEntity(value);
+          final model = CartItemModel.fromJson(Map<String, dynamic>.from(value));
+          _items[key] = _mapModelToEntity(model);
         });
       }
-    } catch (e) {
-      debugPrint('Lỗi load cart: $e');
-    }
+    } catch (_) {}
 
     return _items.values.toList();
   }
@@ -81,14 +80,14 @@ class CartRepositoryImpl implements CartRepository {
 
   @override
   Future<void> addToCart(CartItemEntity item) async {
-    if (_items.containsKey(item.productId)) {
-      final existing = _items[item.productId]!;
+    final key = item.productId ?? item.id;
+    if (key == null) return;
 
-      _items[item.productId] = existing.copyWith(
-        quantity: existing.quantity + 1,
-      );
+    if (_items.containsKey(key)) {
+      final existing = _items[key]!;
+      _items[key] = existing.copyWith(quantity: existing.quantity + 1);
     } else {
-      _items[item.productId] = item;
+      _items[key] = item;
     }
 
     await _syncToServer();
@@ -107,9 +106,7 @@ class CartRepositoryImpl implements CartRepository {
     final existing = _items[productId]!;
 
     if (existing.quantity > 1) {
-      _items[productId] = existing.copyWith(
-        quantity: existing.quantity - 1,
-      );
+      _items[productId] = existing.copyWith(quantity: existing.quantity - 1);
     } else {
       _items.remove(productId);
     }
@@ -125,17 +122,11 @@ class CartRepositoryImpl implements CartRepository {
 
   @override
   double getTotalAmount() {
-    return _items.values.fold(
-      0.0,
-          (sum, item) => sum + item.totalPrice,
-    );
+    return _items.values.fold(0.0, (sum, item) => sum + item.totalPrice);
   }
 
   @override
   int getTotalQuantity() {
-    return _items.values.fold(
-      0,
-          (sum, item) => sum + item.quantity,
-    );
+    return _items.values.fold(0, (sum, item) => sum + item.quantity);
   }
 }

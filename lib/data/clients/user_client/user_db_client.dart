@@ -3,7 +3,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'user_db_client.g.dart';
 
-@RestApi(baseUrl: "https://bookstore-project-f0504-default-rtdb.asia-southeast1.firebasedatabase.app")
+@RestApi()
 abstract class UserDbClient {
   factory UserDbClient(Dio dio, {String baseUrl}) = _UserDbClient;
 
@@ -11,7 +11,7 @@ abstract class UserDbClient {
   Future<void> createUser(
       @Path("uid") String uid,
       @Query("auth") String token,
-      @Body() Map<String, dynamic> body,
+      @Body() Map<String, dynamic> data,
       );
 
   @GET("/users.json")

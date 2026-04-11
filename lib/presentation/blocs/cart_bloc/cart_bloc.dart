@@ -1,4 +1,4 @@
-import 'cart_bloc_widget.dart';
+import 'cart.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   final GetCartUseCase getCartUseCase;

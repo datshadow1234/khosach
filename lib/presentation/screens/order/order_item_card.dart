@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'order_screen_widget.dart';
+import 'order.dart';
 
 class OrderItemCard extends StatefulWidget {
   final OrderEntity order;

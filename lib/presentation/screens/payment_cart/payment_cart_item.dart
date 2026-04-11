@@ -1,6 +1,7 @@
-import 'payment_widget.dart';
+import '../admin/admin.dart';
+import 'payment.dart';
 
-class CartItemCard extends StatefulWidget {
+class CartItemCard extends HookWidget {
   final String productId;
   final CartItemEntity cardItem;
 
@@ -11,56 +12,50 @@ class CartItemCard extends StatefulWidget {
   });
 
   @override
-  State<CartItemCard> createState() => _CartItemCardState();
-}
-
-class _CartItemCardState extends State<CartItemCard> {
-  @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(widget.cardItem.productId),
+      key: ValueKey(cardItem.productId),
       background: Container(
-        color: Theme.of(context).colorScheme.error,
+        color: Colors.redAccent,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-        child: const Icon(Icons.delete, color: Colors.white, size: 30),
+        child: const Icon(Icons.delete_outline, color: Colors.white, size: 28),
       ),
       direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) {
-        return showConfirmDialog(
-          context,
-          'Bạn có chắc muốn xóa sản phẩm "${widget.cardItem.title}" khỏi giỏ hàng?',
-        );
+      confirmDismiss: (direction) => showConfirmDialog(
+        context,
+        'Xóa "${cardItem.title}" khỏi giỏ hàng?',
+      ),
+      onDismissed: (_) {
+        BlocProvider.of<CartBloc>(context).add(RemoveCartEvent(productId));
       },
-      onDismissed: (direction) {
-        context.read<CartBloc>().add(
-          RemoveCartEvent(widget.productId),
-        );
-      },
-      child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-        child: ListTile(
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(widget.cardItem.imageUrl),
-            backgroundColor: Colors.transparent,
-          ),
-          title: Text(
-            widget.cardItem.title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text('Giá: ${widget.cardItem.price} đ'),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.blueGrey.shade50,
-              borderRadius: BorderRadius.circular(10),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade100),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(cardItem.imageUrl, width: 60, height: 60, fit: BoxFit.cover),
             ),
-            child: Text(
-              'SL: ${widget.cardItem.quantity}',
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(cardItem.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text('${cardItem.price} đ', style: TextStyle(color: Colors.grey.shade600)),
+                ],
+              ),
             ),
-          ),
+            Text('x${cardItem.quantity}', style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
         ),
       ),
     );

@@ -1,4 +1,4 @@
-import 'admin_product_bloc_widget.dart';
+import 'admin_product.dart';
 
 class AdminProductBloc extends Bloc<AdminProductEvent, AdminProductState> {
   final GetProductsUseCase getProductsUseCase;

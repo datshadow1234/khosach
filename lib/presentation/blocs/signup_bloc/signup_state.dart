@@ -1,4 +1,4 @@
-import 'signup_bloc_widget.dart';
+import 'signup.dart';
 
 abstract class SignupState extends Equatable {
   const SignupState();

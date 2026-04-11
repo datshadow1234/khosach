@@ -1,4 +1,5 @@
-import 'repositories_widget.dart';
+import '../models/admin_model/admin_model.dart';
+import 'repositories.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
   final AdminDbClient adminDbClient;
@@ -8,21 +9,14 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<UserEntity> getAdminProfile(String uid, String token) async {
     try {
-      final response = await adminDbClient.getAdminWithQuery(token, '"uid"', '"$uid"');
-      if (response.isEmpty) throw Exception("Không tìm thấy dữ liệu Admin");
+      final response = await adminDbClient.getAdminDirect(uid, token);
 
-      final userData = Map<String, dynamic>.from(response.values.first);
-      final model = UserModel.fromJson(userData);
+      if (response.isEmpty) {
+        throw Exception("Không tìm thấy dữ liệu Admin tại node: $uid");
+      }
+      final model = AdminModel.fromJson(response);
 
-      return UserEntity(
-        uid: model.uid,
-        imageUrl: '',
-        email: model.email,
-        name: model.name,
-        phone: model.phone,
-        address: model.address,
-        role: model.role,
-      );
+      return model.toEntity();
     } catch (e) {
       throw Exception('AdminRepo Error: $e');
     }
@@ -31,18 +25,15 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<void> updateAdminProfile(UserEntity admin, String token) async {
     try {
-      final updateData = {
-        'name': admin.name,
-        'phone': admin.phone,
-        'address': admin.address,
-      };
-
-      final response = await adminDbClient.getAdminWithQuery(token, '"uid"', '"${admin.uid}"');
-
-      if (response.isNotEmpty) {
-        String firebaseUrl = response.keys.first;
-        await adminDbClient.updateAdminInfo(firebaseUrl, token, updateData);
-      }
+      await adminDbClient.updateAdminInfo(
+        admin.uid,
+        token,
+        {
+          'name': admin.name,
+          'phone': admin.phone,
+          'address': admin.address,
+        },
+      );
     } catch (e) {
       throw Exception('Admin Update Error: $e');
     }
@@ -52,20 +43,18 @@ class AdminRepositoryImpl implements AdminRepository {
   Future<List<UserEntity>> getAllUsers(String token) async {
     try {
       final response = await adminDbClient.getAllUsers(token);
+
+      if (response == null || response is! Map || response.isEmpty) {
+        return [];
+      }
+
       final List<UserEntity> users = [];
 
       response.forEach((key, value) {
-        final model = UserModel.fromJson(Map<String, dynamic>.from(value));
-        users.add(UserEntity(
-          uid: model.uid,
-          imageUrl: '',
-          email: model.email,
-          name: model.name,
-          phone: model.phone,
-          address: model.address,
-          role: model.role,
-        ));
+        final model = AdminModel.fromJson(Map<String, dynamic>.from(value as Map));
+        users.add(model.toEntity());
       });
+
       return users;
     } catch (e) {
       throw Exception('Get All Users Error: $e');
@@ -75,11 +64,7 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<void> deleteUser(String uid, String token) async {
     try {
-      final response = await adminDbClient.getAdminWithQuery(token, '"uid"', '"$uid"');
-      if (response.isNotEmpty) {
-        String firebaseUrl = response.keys.first;
-        await adminDbClient.deleteUser(firebaseUrl, token);
-      }
+      await adminDbClient.deleteUser(uid, token);
     } catch (e) {
       throw Exception('Delete User Error: $e');
     }

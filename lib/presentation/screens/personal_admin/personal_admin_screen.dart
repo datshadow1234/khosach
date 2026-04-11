@@ -1,4 +1,4 @@
-import 'personal_admin_screen_widget.dart';
+import 'personal.dart';
 
 class PersonalAdminScreen extends StatefulWidget {
   static const routeName = '/personal-admin';

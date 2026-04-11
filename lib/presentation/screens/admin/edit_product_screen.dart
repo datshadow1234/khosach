@@ -1,14 +1,11 @@
-import 'admin_screen_widget.dart';
+import 'admin.dart';
 
-class EditProductScreen extends StatefulWidget {
+class EditProductScreen extends HookWidget {
   static const routeName = '/edit-product';
-
-  EditProductScreen(
-      ProductEntity? product, {
-        super.key,
-      }) {
-    if (product == null) {
-      this.product = const ProductEntity(
+  final ProductEntity product;
+  EditProductScreen(ProductEntity? initialProduct, {super.key})
+      : product = initialProduct ??
+      const ProductEntity(
         id: '',
         title: '',
         category: '',
@@ -19,106 +16,138 @@ class EditProductScreen extends StatefulWidget {
         price: 0,
         imageUrl: '',
       );
-    } else {
-      this.product = product;
-    }
-  }
-
-  late final ProductEntity product;
-  @override
-  State<EditProductScreen> createState() => _EditProductScreenState();
-}
-
-class _EditProductScreenState extends State<EditProductScreen> {
-  final _imageUrlController = TextEditingController();
-  final _imageUrlFocusNode = FocusNode();
-  final _editForm = GlobalKey<FormState>();
-  late ProductEntity _editedProduct;
-
   bool _isValidImageUrl(String value) {
-    return (value.startsWith('http') ||
-        value.startsWith('https') && (value.endsWith('.png')) ||
-        value.endsWith('.jpg') ||
-        value.endsWith('.jpeg'));
+    return value.startsWith('http') ||
+        (value.startsWith('https') &&
+            (value.endsWith('.png') ||
+                value.endsWith('.jpg') ||
+                value.endsWith('.jpeg')));
   }
-
-  @override
-  void initState() {
-    _imageUrlFocusNode.addListener(() {
-      if (!_imageUrlFocusNode.hasFocus) {
-        if (!_isValidImageUrl(_imageUrlController.text)) {
-          return;
-        }
-        setState(() {});
-      }
-    });
-    _editedProduct = widget.product;
-    _imageUrlController.text = _editedProduct.imageUrl;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _imageUrlController.dispose();
-    _imageUrlFocusNode.dispose();
-    super.dispose();
-  }
-
-  void _saveForm() {
-    final isValid = _editForm.currentState!.validate();
-    if (!isValid) {
-      return;
-    }
-    _editForm.currentState!.save();
-
-    if (_editedProduct.id.isNotEmpty) {
-      context.read<AdminProductBloc>().add(UpdateAdminProduct(_editedProduct));
-    } else {
-      context.read<AdminProductBloc>().add(AddAdminProduct(_editedProduct));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final imageUrlController = useTextEditingController(text: product.imageUrl);
+    final imageUrlFocusNode = useFocusNode();
+    final editFormKey = useMemoized(() => GlobalKey<FormState>());
+    final editedProductState = useState<ProductEntity>(product);
+
+    useEffect(() {
+      void listener() {
+        if (!imageUrlFocusNode.hasFocus) {
+          if (_isValidImageUrl(imageUrlController.text)) {
+            editedProductState.value = editedProductState.value.copyWith(
+              imageUrl: imageUrlController.text,
+            );
+          }
+        }
+      }
+      imageUrlFocusNode.addListener(listener);
+      return () => imageUrlFocusNode.removeListener(listener);
+    }, [imageUrlFocusNode]);
+
+    void saveForm() {
+      final isValid = editFormKey.currentState!.validate();
+      if (!isValid) return;
+
+      editFormKey.currentState!.save();
+
+      final adminBloc = BlocProvider.of<AdminProductBloc>(context);
+
+      if (editedProductState.value.id.isNotEmpty) {
+        adminBloc.add(UpdateAdminProduct(editedProductState.value));
+      } else {
+        adminBloc.add(AddAdminProduct(editedProductState.value));
+      }
+    }
+
     return BlocListener<AdminProductBloc, AdminProductState>(
       listener: (context, state) {
         if (state is AdminProductActionSuccess) {
           Navigator.of(context).pop();
         } else if (state is AdminProductError) {
-          showErrorDialog(context, 'Something went wrong: ${state.message}');
+          showErrorDialog(context, 'Có lỗi xảy ra: ${state.message}');
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Edit product'),
-          actions: <Widget>[
+          title: Text(product.id.isEmpty ? 'Thêm sản phẩm' : 'Chỉnh sửa'),
+          actions: [
             IconButton(
-              icon: const Icon(Icons.save),
-              onPressed: _saveForm,
+              icon: const Icon(Icons.check_rounded),
+              onPressed: saveForm,
             ),
           ],
         ),
         body: BlocBuilder<AdminProductBloc, AdminProductState>(
           builder: (context, state) {
             if (state is AdminProductActionLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
-            return Padding(
+
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Form(
-                key: _editForm,
-                child: ListView(
-                  children: <Widget>[
-                    buildTitleField(),
-                    buildCategoryField(),
-                    buildAuthorField(),
-                    buildPriceField(),
-                    buildDescriptionField(),
-                    buildCoutryField(),
-                    buildLanguageField(),
-                    buildProductPreview(),
+                key: editFormKey,
+                child: Column(
+                  children: [
+                    _buildField(
+                      label: 'Tên sách',
+                      initialValue: editedProductState.value.title,
+                      onSaved: (v) => editedProductState.value = editedProductState.value.copyWith(title: v),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildField(
+                      label: 'Thể loại',
+                      initialValue: editedProductState.value.category,
+                      onSaved: (v) => editedProductState.value = editedProductState.value.copyWith(category: v),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildField(
+                      label: 'Tác giả',
+                      initialValue: editedProductState.value.author,
+                      onSaved: (v) => editedProductState.value = editedProductState.value.copyWith(author: v),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildField(
+                            label: 'Giá bán',
+                            initialValue: editedProductState.value.price.toString(),
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || double.tryParse(value) == null || double.parse(value) <= 0) {
+                                return 'Giá không hợp lệ';
+                              }
+                              return null;
+                            },
+                            onSaved: (v) => editedProductState.value = editedProductState.value.copyWith(price: double.parse(v!)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildField(
+                            label: 'Quốc gia',
+                            initialValue: editedProductState.value.coutry,
+                            onSaved: (v) => editedProductState.value = editedProductState.value.copyWith(coutry: v),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _buildField(
+                      label: 'Mô tả',
+                      initialValue: editedProductState.value.description,
+                      maxLines: 3,
+                      validator: (v) => (v == null || v.length < 10) ? 'Mô tả quá ngắn' : null,
+                      onSaved: (v) => editedProductState.value = editedProductState.value.copyWith(description: v),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildImagePreviewSection(
+                      controller: imageUrlController,
+                      focusNode: imageUrlFocusNode,
+                      onSaved: (v) => editedProductState.value = editedProductState.value.copyWith(imageUrl: v),
+                      onFieldSubmitted: (_) => saveForm(),
+                    ),
                   ],
                 ),
               ),
@@ -128,195 +157,78 @@ class _EditProductScreenState extends State<EditProductScreen> {
       ),
     );
   }
-
-  TextFormField buildTitleField() {
+  Widget _buildField({
+    required String label,
+    required String initialValue,
+    required Function(String?) onSaved,
+    TextInputType? keyboardType,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
     return TextFormField(
-      initialValue: _editedProduct.title,
-      decoration: const InputDecoration(labelText: 'Tên sách'),
-      textInputAction: TextInputAction.next,
-      autofocus: true,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please provide a value';
-        }
-        return null;
-      },
-      onSaved: (value) {
-        _editedProduct = _editedProduct.copyWith(title: value);
-      },
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      ),
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      validator: validator ?? (value) => value!.isEmpty ? 'Không được để trống' : null,
+      onSaved: onSaved,
     );
   }
 
-  TextFormField buildCategoryField() {
-    return TextFormField(
-      initialValue: _editedProduct.category,
-      decoration: const InputDecoration(labelText: 'Thể loại'),
-      textInputAction: TextInputAction.next,
-      autofocus: true,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please provide a value';
-        }
-        return null;
-      },
-      onSaved: (value) {
-        _editedProduct = _editedProduct.copyWith(category: value);
-      },
-    );
-  }
-
-  TextFormField buildAuthorField() {
-    return TextFormField(
-      initialValue: _editedProduct.author,
-      decoration: const InputDecoration(labelText: 'Tác giả'),
-      textInputAction: TextInputAction.next,
-      autofocus: true,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please provide a value';
-        }
-        return null;
-      },
-      onSaved: (value) {
-        _editedProduct = _editedProduct.copyWith(author: value);
-      },
-    );
-  }
-
-  TextFormField buildCoutryField() {
-    return TextFormField(
-      initialValue: _editedProduct.coutry,
-      decoration: const InputDecoration(labelText: 'Quốc gia'),
-      textInputAction: TextInputAction.next,
-      autofocus: true,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please provide a value';
-        }
-        return null;
-      },
-      onSaved: (value) {
-        _editedProduct = _editedProduct.copyWith(coutry: value);
-      },
-    );
-  }
-
-  TextFormField buildLanguageField() {
-    return TextFormField(
-      initialValue: _editedProduct.language,
-      decoration: const InputDecoration(labelText: 'Ngôn ngữ'),
-      textInputAction: TextInputAction.next,
-      autofocus: true,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please provide a value';
-        }
-        return null;
-      },
-      onSaved: (value) {
-        _editedProduct = _editedProduct.copyWith(language: value);
-      },
-    );
-  }
-
-  TextFormField buildPriceField() {
-    return TextFormField(
-      initialValue: _editedProduct.price.toString(),
-      decoration: const InputDecoration(labelText: 'Giá bán'),
-      textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.number,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please provide a price';
-        }
-        if (double.tryParse(value) == null) {
-          return 'Please enter a valid number';
-        }
-        if (double.parse(value) <= 0) {
-          return 'Please enter a number greater than zero';
-        }
-        return null;
-      },
-      onSaved: (value) {
-        _editedProduct = _editedProduct.copyWith(price: double.parse(value!));
-      },
-    );
-  }
-
-  TextFormField buildDescriptionField() {
-    return TextFormField(
-      initialValue: _editedProduct.description,
-      decoration: const InputDecoration(labelText: 'Mô tả'),
-      maxLines: 3,
-      keyboardType: TextInputType.multiline,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please enter a description';
-        }
-        if (value.length < 10) {
-          return 'Should be at least 10 character long.';
-        }
-        return null;
-      },
-      onSaved: (value) {
-        _editedProduct = _editedProduct.copyWith(description: value);
-      },
-    );
-  }
-
-  Widget buildProductPreview() {
+  Widget _buildImagePreviewSection({
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required Function(String?) onSaved,
+    required Function(String) onFieldSubmitted,
+  }) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: <Widget>[
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         Container(
-          width: 100,
-          height: 100,
-          margin: const EdgeInsets.only(
-            top: 8,
-            right: 10,
-          ),
+          width: 80,
+          height: 110,
           decoration: BoxDecoration(
-            border: Border.all(
-              width: 1,
-              color: Colors.grey,
-            ),
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[300]!),
           ),
-          child: _imageUrlController.text.isEmpty
-              ? const Text('Hình ảnh')
-              : FittedBox(
+          alignment: Alignment.center,
+          child: controller.text.isEmpty
+              ? const Icon(Icons.image_not_supported, color: Colors.grey)
+              : ClipRRect(
+            borderRadius: BorderRadius.circular(8),
             child: Image.network(
-              _imageUrlController.text,
+              controller.text,
               fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => const Icon(Icons.error),
             ),
           ),
         ),
+        const SizedBox(width: 12),
         Expanded(
-          child: buildImageURLField(),
+          child: TextFormField(
+            controller: controller,
+            focusNode: focusNode,
+            decoration: const InputDecoration(
+              labelText: 'Link ảnh sản phẩm',
+              hintText: 'https://...',
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.url,
+            onFieldSubmitted: onFieldSubmitted,
+            onSaved: onSaved,
+            validator: (value) {
+              if (value == null || value.isEmpty) return 'Vui lòng nhập URL';
+              if (!_isValidImageUrl(value)) return 'URL không đúng định dạng ảnh';
+              return null;
+            },
+          ),
         ),
       ],
-    );
-  }
-
-  TextFormField buildImageURLField() {
-    return TextFormField(
-      decoration: const InputDecoration(labelText: 'Nhập URL sách'),
-      keyboardType: TextInputType.url,
-      textInputAction: TextInputAction.done,
-      controller: _imageUrlController,
-      focusNode: _imageUrlFocusNode,
-      onFieldSubmitted: (value) => _saveForm(),
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'Please enter an image URL';
-        }
-        if (!_isValidImageUrl(value)) {
-          return 'Please enter a valid image URL';
-        }
-        return null;
-      },
-      onSaved: (value) {
-        _editedProduct = _editedProduct.copyWith(imageUrl: value);
-      },
     );
   }
 }

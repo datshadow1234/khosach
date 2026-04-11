@@ -1,4 +1,4 @@
-import 'auth_bloc_widget.dart';
+import 'auth.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository repository;

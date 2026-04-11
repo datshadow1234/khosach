@@ -8,3 +8,4 @@ export '../../blocs/auth_bloc/auth_state.dart';
 export '../../../domain/entities/user_entity.dart';
 export '../../blocs/logout_bloc/logout_bloc.dart';
 export '../../blocs/logout_bloc/logout_event.dart';
+export '../../../data/models/admin_model/admin_model.dart';

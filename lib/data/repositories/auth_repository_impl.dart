@@ -1,4 +1,4 @@
-import 'repositories_widget.dart';
+import 'repositories.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthLocalDataSource localDataSource;
   AuthRepositoryImpl({required this.localDataSource});

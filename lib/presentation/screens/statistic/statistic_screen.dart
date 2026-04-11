@@ -1,4 +1,4 @@
-import 'statistic_screen_widget.dart';
+import 'statistic.dart';
 
 class StatisticScreen extends StatefulWidget {
   const StatisticScreen({super.key});

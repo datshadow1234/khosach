@@ -1,4 +1,4 @@
-import 'repositories_widget.dart';
+import 'repositories.dart';
 
 class LoginRepositoryImpl implements LoginRepository {
   final AuthClient authClient;
@@ -10,8 +10,24 @@ class LoginRepositoryImpl implements LoginRepository {
 
   @override
   Future<AuthTokenEntity> signIn(String email, String password) async {
-    final res = await authClient.signIn(_apiKey, {'email': email, 'password': password, 'returnSecureToken': true});
-    return AuthTokenEntity(token: res.token, userId: res.userId, expiryDate: DateTime.now().add(Duration(seconds: int.parse(res.expiresIn))));
+    try {
+      final res = await authClient.signIn(_apiKey, {
+        'email': email.trim(),
+        'password': password.trim(),
+        'returnSecureToken': true,
+      });
+
+      return AuthTokenEntity(
+        token: res.token,
+        userId: res.userId,
+        expiryDate: DateTime.now().add(
+          Duration(seconds: int.parse(res.expiresIn)),
+        ),
+      );
+    } on DioException catch (e) {
+      print('SIGN IN ERROR: ${e.response?.data}');
+      throw Exception(e.response?.data.toString());
+    }
   }
   @override
   Future<String> getUserRole(String uid, String token) async {

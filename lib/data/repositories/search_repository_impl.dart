@@ -1,4 +1,4 @@
-import 'repositories_widget.dart';
+import 'repositories.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
   @override

@@ -1,4 +1,4 @@
-import 'auth_bloc_widget.dart';
+import 'auth.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();

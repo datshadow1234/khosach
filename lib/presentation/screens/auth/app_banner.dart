@@ -1,4 +1,4 @@
-import 'auth_screen_widget.dart';
+import 'auth.dart';
 
 class AppBanner extends StatelessWidget {
   const AppBanner({

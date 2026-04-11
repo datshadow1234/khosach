@@ -1,4 +1,4 @@
-import 'statistic_bloc_widget.dart';
+import 'statistic.dart';
 
 class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
   final StatisticRepository repository;

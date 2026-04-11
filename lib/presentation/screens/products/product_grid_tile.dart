@@ -1,4 +1,4 @@
-import 'product_widget.dart';
+import 'product.dart';
 
 class ProductGridTile extends StatelessWidget {
   final ProductEntity product;

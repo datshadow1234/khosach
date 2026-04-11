@@ -13,16 +13,43 @@ class _AdminDbClient implements AdminDbClient {
     this._dio, {
     this.baseUrl,
     this.errorLogger,
-  }) {
-    baseUrl ??=
-        'https://bookstore-project-f0504-default-rtdb.asia-southeast1.firebasedatabase.app';
-  }
+  });
 
   final Dio _dio;
 
   String? baseUrl;
 
   final ParseErrorLogger? errorLogger;
+
+  @override
+  Future<dynamic> getAdminDirect(
+    String uid,
+    String token,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'auth': token};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<dynamic>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/users/${uid}.json',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
 
   @override
   Future<dynamic> getAdminWithQuery(
@@ -61,7 +88,7 @@ class _AdminDbClient implements AdminDbClient {
 
   @override
   Future<void> updateAdminInfo(
-    String firebaseUrl,
+    String uid,
     String token,
     Map<String, dynamic> body,
   ) async {
@@ -77,7 +104,7 @@ class _AdminDbClient implements AdminDbClient {
     )
         .compose(
           _dio.options,
-          '/users/${firebaseUrl}.json',
+          '/users/${uid}.json',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -118,7 +145,7 @@ class _AdminDbClient implements AdminDbClient {
 
   @override
   Future<void> deleteUser(
-    String firebaseUrl,
+    String uid,
     String token,
   ) async {
     final _extra = <String, dynamic>{};
@@ -132,7 +159,7 @@ class _AdminDbClient implements AdminDbClient {
     )
         .compose(
           _dio.options,
-          '/users/${firebaseUrl}.json',
+          '/users/${uid}.json',
           queryParameters: queryParameters,
           data: _data,
         )

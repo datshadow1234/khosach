@@ -1,4 +1,4 @@
-import 'usecase_widget.dart';
+import '../usecase.dart';
 
 class GetAdminProfileUseCase {
   final AdminRepository repository;

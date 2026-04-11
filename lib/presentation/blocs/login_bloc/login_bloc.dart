@@ -1,4 +1,4 @@
-import 'login_bloc_widget.dart';
+import 'login.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository repository;

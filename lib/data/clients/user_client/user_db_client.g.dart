@@ -13,10 +13,7 @@ class _UserDbClient implements UserDbClient {
     this._dio, {
     this.baseUrl,
     this.errorLogger,
-  }) {
-    baseUrl ??=
-        'https://bookstore-project-f0504-default-rtdb.asia-southeast1.firebasedatabase.app';
-  }
+  });
 
   final Dio _dio;
 
@@ -28,13 +25,13 @@ class _UserDbClient implements UserDbClient {
   Future<void> createUser(
     String uid,
     String token,
-    Map<String, dynamic> body,
+    Map<String, dynamic> data,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'auth': token};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body);
+    _data.addAll(data);
     final _options = _setStreamType<void>(Options(
       method: 'PUT',
       headers: _headers,

@@ -22,6 +22,7 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) {
 mixin _$OrderModel {
   String? get id => throw _privateConstructorUsedError;
   double get amount => throw _privateConstructorUsedError;
+  double get shippingFee => throw _privateConstructorUsedError;
   List<Map<String, dynamic>> get products => throw _privateConstructorUsedError;
   int get totalQuantity => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
@@ -46,6 +47,7 @@ abstract class $OrderModelCopyWith<$Res> {
   $Res call(
       {String? id,
       double amount,
+      double shippingFee,
       List<Map<String, dynamic>> products,
       int totalQuantity,
       String name,
@@ -71,6 +73,7 @@ class _$OrderModelCopyWithImpl<$Res, $Val extends OrderModel>
   $Res call({
     Object? id = freezed,
     Object? amount = null,
+    Object? shippingFee = null,
     Object? products = null,
     Object? totalQuantity = null,
     Object? name = null,
@@ -88,6 +91,10 @@ class _$OrderModelCopyWithImpl<$Res, $Val extends OrderModel>
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
+              as double,
+      shippingFee: null == shippingFee
+          ? _value.shippingFee
+          : shippingFee // ignore: cast_nullable_to_non_nullable
               as double,
       products: null == products
           ? _value.products
@@ -136,6 +143,7 @@ abstract class _$$OrderModelImplCopyWith<$Res>
   $Res call(
       {String? id,
       double amount,
+      double shippingFee,
       List<Map<String, dynamic>> products,
       int totalQuantity,
       String name,
@@ -159,6 +167,7 @@ class __$$OrderModelImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? amount = null,
+    Object? shippingFee = null,
     Object? products = null,
     Object? totalQuantity = null,
     Object? name = null,
@@ -176,6 +185,10 @@ class __$$OrderModelImplCopyWithImpl<$Res>
       amount: null == amount
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
+              as double,
+      shippingFee: null == shippingFee
+          ? _value.shippingFee
+          : shippingFee // ignore: cast_nullable_to_non_nullable
               as double,
       products: null == products
           ? _value._products
@@ -219,6 +232,7 @@ class _$OrderModelImpl implements _OrderModel {
   const _$OrderModelImpl(
       {this.id,
       this.amount = 0.0,
+      this.shippingFee = 0.0,
       final List<Map<String, dynamic>> products = const [],
       this.totalQuantity = 0,
       this.name = '',
@@ -237,6 +251,9 @@ class _$OrderModelImpl implements _OrderModel {
   @override
   @JsonKey()
   final double amount;
+  @override
+  @JsonKey()
+  final double shippingFee;
   final List<Map<String, dynamic>> _products;
   @override
   @JsonKey()
@@ -270,7 +287,7 @@ class _$OrderModelImpl implements _OrderModel {
 
   @override
   String toString() {
-    return 'OrderModel(id: $id, amount: $amount, products: $products, totalQuantity: $totalQuantity, name: $name, phone: $phone, address: $address, customerId: $customerId, payResult: $payResult, dateTime: $dateTime)';
+    return 'OrderModel(id: $id, amount: $amount, shippingFee: $shippingFee, products: $products, totalQuantity: $totalQuantity, name: $name, phone: $phone, address: $address, customerId: $customerId, payResult: $payResult, dateTime: $dateTime)';
   }
 
   @override
@@ -280,6 +297,8 @@ class _$OrderModelImpl implements _OrderModel {
             other is _$OrderModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.amount, amount) || other.amount == amount) &&
+            (identical(other.shippingFee, shippingFee) ||
+                other.shippingFee == shippingFee) &&
             const DeepCollectionEquality().equals(other._products, _products) &&
             (identical(other.totalQuantity, totalQuantity) ||
                 other.totalQuantity == totalQuantity) &&
@@ -300,6 +319,7 @@ class _$OrderModelImpl implements _OrderModel {
       runtimeType,
       id,
       amount,
+      shippingFee,
       const DeepCollectionEquality().hash(_products),
       totalQuantity,
       name,
@@ -327,6 +347,7 @@ abstract class _OrderModel implements OrderModel {
   const factory _OrderModel(
       {final String? id,
       final double amount,
+      final double shippingFee,
       final List<Map<String, dynamic>> products,
       final int totalQuantity,
       final String name,
@@ -343,6 +364,8 @@ abstract class _OrderModel implements OrderModel {
   String? get id;
   @override
   double get amount;
+  @override
+  double get shippingFee;
   @override
   List<Map<String, dynamic>> get products;
   @override

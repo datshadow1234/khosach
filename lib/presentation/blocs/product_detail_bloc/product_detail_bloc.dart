@@ -1,4 +1,4 @@
-import 'product_detail_bloc_widget.dart';
+import 'product_detail.dart';
 
 class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
   ProductDetailBloc() : super(ProductDetailInitial()) {

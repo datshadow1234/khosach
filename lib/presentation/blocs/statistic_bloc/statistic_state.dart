@@ -1,4 +1,4 @@
-import 'statistic_bloc_widget.dart';
+import 'statistic.dart';
 
 abstract class StatisticState extends Equatable {
   @override

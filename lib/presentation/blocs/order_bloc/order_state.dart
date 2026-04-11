@@ -1,4 +1,4 @@
-import 'order_bloc_widget.dart';
+import 'order.dart';
 abstract class OrderState {}
 
 class OrderInitial extends OrderState {}

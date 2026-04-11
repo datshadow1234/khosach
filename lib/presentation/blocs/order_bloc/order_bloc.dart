@@ -1,4 +1,4 @@
-import 'order_bloc_widget.dart';
+import 'order.dart';
 
 class OrderBloc extends Bloc<OrderEvent, OrderState> {
   final AddOrderUseCase addOrderUseCase;

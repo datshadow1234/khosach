@@ -1,8 +1,9 @@
-import 'repositories_widget.dart';
+import 'repositories.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   final ProductClient client;
   final AuthLocalDataSource authLocalDataSource;
+
   ProductRepositoryImpl(
       this.client,
       this.authLocalDataSource,
@@ -15,20 +16,22 @@ class ProductRepositoryImpl implements ProductRepository {
     if (tokenData == null) {
       throw Exception('Token null');
     }
-    final response = await client.getProducts(tokenData.token);
 
+    final response = await client.getProducts(tokenData.token);
     final List<ProductEntity> products = [];
 
-    if (response == null) {
+    if (response == null || response is! Map) {
       return products;
     }
 
-    response.forEach((key, value) {
+    final Map<String, dynamic> responseMap = Map<String, dynamic>.from(response);
+
+    responseMap.forEach((key, value) {
       if (value != null) {
-        final model = ProductModel.fromJson({
-          'id': key,
-          ...(value as Map<String, dynamic>),
-        });
+        final data = Map<String, dynamic>.from(value as Map);
+        data['id'] = key;
+
+        final model = ProductModel.fromJson(data);
 
         products.add(
           ProductEntity(
@@ -48,6 +51,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
     return products;
   }
+
   Map<String, dynamic> _productToJson(ProductEntity product) {
     return {
       'title': product.title,
@@ -74,7 +78,11 @@ class ProductRepositoryImpl implements ProductRepository {
     final tokenData = await authLocalDataSource.getAuthToken();
     if (tokenData == null) throw Exception('Token null');
 
-    await client.updateProduct(product.id, tokenData.token, _productToJson(product));
+    await client.updateProduct(
+      product.id,
+      tokenData.token,
+      _productToJson(product),
+    );
   }
 
   @override

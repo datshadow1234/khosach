@@ -1,4 +1,4 @@
-import 'product_list_bloc_widget.dart';
+import 'product_list.dart';
 
 class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   final GetProductsUseCase getProductsUseCase;

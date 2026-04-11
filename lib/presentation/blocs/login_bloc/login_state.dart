@@ -1,4 +1,4 @@
-import 'login_bloc_widget.dart';
+import 'login.dart';
 
 abstract class LoginState extends Equatable {
   const LoginState();

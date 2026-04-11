@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-import 'order_screen_widget.dart';
+import 'order.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   static const routeName = 'order-detail-screen';
@@ -98,7 +98,6 @@ class OrderDetailScreenState extends State<OrderDetailScreen> {
   Widget buildOrderDetails() {
     return SizedBox(width: 400,height: widget.order.productCount*30, child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-      // height: min(widget.order.productCount * 20.0 + 40, 150),
       child: ListView(
         children: widget.order.products
             .map(

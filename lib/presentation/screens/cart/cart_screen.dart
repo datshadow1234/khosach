@@ -1,4 +1,4 @@
-import 'cart_screen_widget.dart';
+import 'cart.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';

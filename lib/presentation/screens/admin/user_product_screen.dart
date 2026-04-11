@@ -1,55 +1,62 @@
-import '../../blocs/logout_bloc/logout_bloc.dart';
-import '../../blocs/logout_bloc/logout_event.dart';
-import 'admin_screen_widget.dart';
+import 'admin.dart';
 
-class UserProductsScreen extends StatefulWidget {
+class UserProductsScreen extends HookWidget {
   static const routeName = '/admin-product';
   const UserProductsScreen({super.key});
 
   @override
-  State<UserProductsScreen> createState() => _UserProductsScreenState();
-}
-
-class _UserProductsScreenState extends State<UserProductsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<AdminProductBloc>().add(FetchAdminProducts());
-  }
-
-  Future<void> _refreshProduct(BuildContext context) async {
-    context.read<AdminProductBloc>().add(FetchAdminProducts());
-  }
-
-  @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      BlocProvider.of<AdminProductBloc>(context).add(FetchAdminProducts());
+      return null;
+    }, []);
+
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ADMIN'),
+        title: const Text(
+          'Kho Sản Phẩm',
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+        ),
+        centerTitle: false,
         actions: [
-          buildAddButton(context),
+          _buildSystemActions(context, l10n),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context).pushNamed(EditProductScreen.routeName),
+        child: const Icon(Icons.add),
+      ),
+
       body: BlocBuilder<AdminProductBloc, AdminProductState>(
         builder: (context, state) {
           if (state is AdminProductLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
           }
           if (state is AdminProductError) {
             return Center(child: Text(state.message));
           }
           if (state is AdminProductLoaded) {
             return RefreshIndicator(
-              onRefresh: () => _refreshProduct(context),
-              child: Column(
-                children: [
-                  buildTotalProduct(state.allProducts.length),
-                  SizedBox(
-                    height: 650,
-                    child: buildUserProductListView(state.allProducts),
+              onRefresh: () async {
+                BlocProvider.of<AdminProductBloc>(context).add(FetchAdminProducts());
+              },
+              child: CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        "Đang hiển thị ${state.allProducts.length} sản phẩm",
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.w500
+                        ),
+                      ),
+                    ),
                   ),
+                  _buildProductSliverList(state.allProducts),
                 ],
               ),
             );
@@ -59,54 +66,61 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
       ),
     );
   }
-
-  Widget buildTotalProduct(int itemCount) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(
-          "Tổng số sản phẩm là: $itemCount",
-          style: const TextStyle(color: Colors.grey, fontSize: 18),
-        ),
-      ],
-    );
-  }
-
-  Widget buildAddButton(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            Navigator.of(context).pushNamed(
-              EditProductScreen.routeName,
+  Widget _buildProductSliverList(List products) {
+    if (products.isEmpty) {
+      return const SliverFillRemaining(
+        child: Center(child: Text("Danh sách trống")),
+      );
+    }
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 80),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+              (context, index) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.grey.shade200),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: UserProductListTile(products[index]),
+              ),
             );
           },
+          childCount: products.length,
         ),
-        IconButton(
-          icon: const Icon(Icons.logout),
-          onPressed: () {
-            context.read<LogoutBloc>().add(
-              LogoutSubmitted(),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget buildUserProductListView(List products) {
-    return ListView.builder(
-      itemCount: products.length,
-      itemBuilder: (context, index) => Column(
-        children: [
-          UserProductListTile(
-            products[index],
-          ),
-          const Divider(),
-        ],
       ),
+    );
+  }
+  Widget _buildSystemActions(BuildContext context, AppLocalizations l10n) {
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.contrast_outlined, size: 20),
+          onPressed: () => BlocProvider.of<ThemeCubit>(context).toggleTheme(),
+        ),
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (value) {
+            if (value == 'logout') {
+              BlocProvider.of<LogoutBloc>(context).add(LogoutSubmitted());
+            } else {
+              BlocProvider.of<LanguageCubit>(context).changeLanguage(value);
+            }
+          },
+          itemBuilder: (ctx) => [
+            PopupMenuItem(value: 'vi', child: Text('Tiếng Việt')),
+            PopupMenuItem(value: 'en', child: Text('English')),
+            const PopupMenuDivider(),
+            const PopupMenuItem(
+              value: 'logout',
+              child: Text('Đăng xuất', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

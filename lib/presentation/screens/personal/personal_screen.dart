@@ -1,4 +1,4 @@
-import 'personal_screen_widget.dart';
+import 'personal.dart';
 class PersonalScreen extends StatefulWidget {
   static const routeName = '/personal';
 
@@ -17,7 +17,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
     'name': '',
     'birthday': '',
     'address': '',
-    'imageUrl': '', // Thêm để xử lý avatar
+    'imageUrl': '',
   };
 
   final _isSubmitting = ValueNotifier<bool>(false);

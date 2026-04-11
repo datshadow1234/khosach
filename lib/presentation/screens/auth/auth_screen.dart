@@ -1,4 +1,4 @@
-import 'auth_screen_widget.dart';
+import 'auth.dart';
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
@@ -9,7 +9,6 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
     return Scaffold(
-      // resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
           Container(
