@@ -1,0 +1,9 @@
+  // final String? id;
+  // final String title;
+  // final String category;
+  // final String author;
+  // final String language;
+  // final String coutry;
+  // final String description;
+  // final double price;
+  // final String imageUrl;
