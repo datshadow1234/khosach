@@ -18,6 +18,8 @@ class ProductEntity extends Equatable {
   final double price;
   final String imageUrl;
   final String bookLink;
+  final List<String> images;
+  final String videoUrl;
 
   const ProductEntity({
     required this.id,
@@ -30,6 +32,8 @@ class ProductEntity extends Equatable {
     required this.price,
     required this.imageUrl,
     required this.bookLink,
+    this.images = const [],
+    this.videoUrl = '',
   });
 
   factory ProductEntity.fromJson(Map<String, dynamic> json) {
@@ -44,6 +48,12 @@ class ProductEntity extends Equatable {
       price: _priceFromJson(json['price']),
       imageUrl: (json['imageUrl'] ?? '').toString(),
       bookLink: (json['bookLink'] ?? '').toString(),
+      images:
+          (json['images'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      videoUrl: (json['videoUrl'] ?? '').toString(),
     );
   }
 
@@ -59,6 +69,8 @@ class ProductEntity extends Equatable {
       'price': price,
       'imageUrl': imageUrl,
       'bookLink': bookLink,
+      'images': images,
+      'videoUrl': videoUrl,
     };
   }
 
@@ -73,6 +85,8 @@ class ProductEntity extends Equatable {
     double? price,
     String? imageUrl,
     String? bookLink,
+    List<String>? images,
+    String? videoUrl,
   }) {
     return ProductEntity(
       id: id ?? this.id,
@@ -85,20 +99,24 @@ class ProductEntity extends Equatable {
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
       bookLink: bookLink ?? this.bookLink,
+      images: images ?? this.images,
+      videoUrl: videoUrl ?? this.videoUrl,
     );
   }
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        category,
-        author,
-        language,
-        coutry,
-        description,
-        price,
-        imageUrl,
-        bookLink,
-      ];
+    id,
+    title,
+    category,
+    author,
+    language,
+    coutry,
+    description,
+    price,
+    imageUrl,
+    bookLink,
+    images,
+    videoUrl,
+  ];
 }

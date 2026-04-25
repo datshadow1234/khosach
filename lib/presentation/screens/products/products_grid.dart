@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:intl/intl.dart';
-import '../../../domain/entities/product_entity.dart';
-import 'product_detail_screen.dart';
+import 'product.dart';
 
 class ProductsGrid extends HookWidget {
   final List<ProductEntity> products;
@@ -11,7 +8,10 @@ class ProductsGrid extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+    final currencyFormat = NumberFormat.currency(
+      locale: 'vi_VN',
+      symbol: 'VNĐ',
+    );
 
     return GridView.builder(
       padding: const EdgeInsets.all(12),
@@ -39,7 +39,9 @@ class ProductsGrid extends HookWidget {
               children: [
                 Expanded(
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(15),
+                    ),
                     child: Image.network(
                       product.imageUrl,
                       width: double.infinity,

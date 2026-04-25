@@ -10,6 +10,12 @@ double _priceFromJson(dynamic value) {
   return 0.0;
 }
 
+List<String> _imagesFromJson(dynamic value) {
+  if (value == null) return [];
+  if (value is List) return value.map((e) => e.toString()).toList();
+  return [];
+}
+
 @freezed
 class ProductModel with _$ProductModel {
   const factory ProductModel({
@@ -23,6 +29,8 @@ class ProductModel with _$ProductModel {
     @JsonKey(fromJson: _priceFromJson) @Default(0.0) double price,
     @Default('') String imageUrl,
     @Default('') String bookLink,
+    @JsonKey(fromJson: _imagesFromJson) @Default([]) List<String> images,
+    @Default('') String videoUrl,
   }) = _ProductModel;
   factory ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);

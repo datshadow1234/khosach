@@ -1,3 +1,5 @@
+import 'package:shopbansach/presentation/screens/admin/admin_search_bar.dart';
+
 import 'admin.dart';
 
 class UserProductsScreen extends HookWidget {
@@ -29,58 +31,24 @@ class UserProductsScreen extends HookWidget {
         child: Column(
           children: [
             const SizedBox(height: 12),
-            TextField(
-              onChanged: (value) {
-                BlocProvider.of<AdminProductBloc>(context)
-                    .add(SearchAdminProducts(value));
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: "Nhập tên sách cần tìm...",
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide(color: Colors.grey.shade200),
-                ),
-              ),
-            ),
+            const AdminSearchBar(),
+
             const SizedBox(height: 16),
+
             Expanded(
               child: BlocBuilder<AdminProductBloc, AdminProductState>(
                 builder: (context, state) {
                   if (state is AdminProductLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
+
                   if (state is AdminProductLoaded) {
                     final products = state.displayProducts;
+
                     if (products.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.inbox_outlined,
-                              size: 64,
-                              color: Colors.grey[300],
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Không có sản phẩm nào',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                      return _empty();
                     }
+
                     return ListView.builder(
                       itemCount: products.length,
                       padding: const EdgeInsets.only(bottom: 20),
@@ -104,12 +72,10 @@ class UserProductsScreen extends HookWidget {
                               size: 28,
                             ),
                           ),
-                          confirmDismiss: (_) async {
-                            return true;
-                          },
                           onDismissed: (_) {
-                            BlocProvider.of<AdminProductBloc>(context)
-                                .add(DeleteAdminProduct(product.id));
+                            BlocProvider.of<AdminProductBloc>(
+                              context,
+                            ).add(DeleteAdminProduct(product.id));
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -134,9 +100,25 @@ class UserProductsScreen extends HookWidget {
                   return const SizedBox();
                 },
               ),
-            )
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _empty() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[300]),
+          const SizedBox(height: 12),
+          Text(
+            'Không có sản phẩm nào',
+            style: TextStyle(color: Colors.grey[600]),
+          ),
+        ],
       ),
     );
   }

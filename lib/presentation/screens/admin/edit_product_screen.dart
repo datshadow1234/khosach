@@ -156,8 +156,9 @@ class EditProductScreen extends HookWidget {
                                       .toString(),
                             keyboardType: TextInputType.number,
                             validator: (value) {
-                              if (value == null || value.isEmpty)
+                              if (value == null || value.isEmpty) {
                                 return 'Không được để trống';
+                              }
                               if (double.tryParse(value) == null ||
                                   double.parse(value) <= 0) {
                                 return 'Giá không hợp lệ';

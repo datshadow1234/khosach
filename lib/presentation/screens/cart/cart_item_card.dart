@@ -25,7 +25,7 @@ class OrderItemCard extends StatelessWidget {
             },
           ),
           Hero(
-            tag: cardItem.productId,
+            tag: 'cart_img_$productId',
             child: AppCachedImage(
               url: cardItem.imageUrl,
               width: 60,

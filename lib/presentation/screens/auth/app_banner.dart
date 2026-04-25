@@ -10,7 +10,10 @@ class AppBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 104.0),
       child: Hero(
         tag: 'app_logo',
-        child: Image.asset('assets/Images/image.png'),
+        child: Material(
+          type: MaterialType.transparency,
+          child: Image.asset('assets/Images/image.png'),
+        ),
       ),
     );
   }

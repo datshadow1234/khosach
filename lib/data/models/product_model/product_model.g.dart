@@ -18,6 +18,9 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       price: json['price'] == null ? 0.0 : _priceFromJson(json['price']),
       imageUrl: json['imageUrl'] as String? ?? '',
       bookLink: json['bookLink'] as String? ?? '',
+      images:
+          json['images'] == null ? const [] : _imagesFromJson(json['images']),
+      videoUrl: json['videoUrl'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
@@ -32,4 +35,6 @@ Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
       'price': instance.price,
       'imageUrl': instance.imageUrl,
       'bookLink': instance.bookLink,
+      'images': instance.images,
+      'videoUrl': instance.videoUrl,
     };

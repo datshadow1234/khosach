@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'product.dart';
 
 class ProductDetailScreen extends HookWidget {
@@ -15,6 +16,34 @@ class ProductDetailScreen extends HookWidget {
       symbol: 'VNĐ',
     );
 
+    final rawUrl = product.videoUrl;
+    final cleanUrl = rawUrl.contains('&')
+        ? rawUrl.substring(0, rawUrl.indexOf('&'))
+        : rawUrl;
+    final videoId = cleanUrl.isNotEmpty
+        ? YoutubePlayer.convertUrlToId(cleanUrl) ?? ''
+        : '';
+    final hasVideo = videoId.isNotEmpty;
+    final controller = useMemoized(
+      () => hasVideo
+          ? YoutubePlayerController(
+              initialVideoId: videoId,
+              flags: const YoutubePlayerFlags(
+                autoPlay: true,
+                mute: false,
+                hideControls: true,
+                disableDragSeek: false,
+                enableCaption: false,
+              ),
+            )
+          : null,
+      [videoId],
+    );
+    useEffect(
+      () =>
+          () => controller?.dispose(),
+      [controller],
+    );
     void handleOrder() {
       final cartItem = CartItemEntity(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -29,12 +58,11 @@ class ProductDetailScreen extends HookWidget {
         country: product.coutry,
         bookLink: product.bookLink,
       );
-
       BlocProvider.of<CartBloc>(context).add(AddCartEvent(cartItem));
       Navigator.of(context).pushNamed(CartScreen.routeName);
     }
 
-    return Scaffold(
+    Widget buildBody() => Scaffold(
       appBar: AppBar(
         elevation: 0,
         iconTheme: IconThemeData(color: theme.textTheme.bodyLarge?.color),
@@ -42,13 +70,10 @@ class ProductDetailScreen extends HookWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Hero(
-              tag: heroTag ?? product.id,
-              child: AppCachedImage(
-                url: product.imageUrl,
-                height: 350,
-                fit: BoxFit.contain,
-              ),
+            ProductMediaSlider(
+              product: product,
+              heroTag: heroTag,
+              youtubeController: controller,
             ),
             Padding(
               padding: const EdgeInsets.all(20),
@@ -84,9 +109,7 @@ class ProductDetailScreen extends HookWidget {
                         ),
                         Expanded(
                           child: GestureDetector(
-                            onTap: () {
-                              launchUrl(Uri.parse(product.bookLink));
-                            },
+                            onTap: () => launchUrl(Uri.parse(product.bookLink)),
                             child: Text(
                               product.bookLink,
                               style: const TextStyle(
@@ -138,6 +161,14 @@ class ProductDetailScreen extends HookWidget {
         ),
       ),
     );
+    if (hasVideo && controller != null) {
+      return YoutubePlayerBuilder(
+        player: YoutubePlayer(controller: controller),
+        builder: (context, player) => buildBody(),
+      );
+    }
+
+    return buildBody();
   }
 
   Widget _buildRowInfo(String label, String value) {

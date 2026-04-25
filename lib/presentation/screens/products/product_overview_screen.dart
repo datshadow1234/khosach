@@ -1,6 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:shopbansach/presentation/blocs/product_list_bloc/product_list_event.dart';
-import 'package:shopbansach/presentation/blocs/product_list_bloc/product_list_state.dart';
 import 'product.dart';
 
 class ProductsOverviewScreen extends HookWidget {
@@ -221,7 +219,10 @@ class ProductsOverviewScreen extends HookWidget {
                   child: GestureDetector(
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (_) => ProductDetailScreen(product),
+                        builder: (_) => ProductDetailScreen(
+                          product,
+                          heroTag: '${product.id}_$title',
+                        ),
                       ),
                     ),
                     child: Card(

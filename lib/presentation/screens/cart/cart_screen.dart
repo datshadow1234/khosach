@@ -49,7 +49,7 @@ class CartScreen extends HookWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           margin: const EdgeInsets.only(bottom: 8),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
+                            color: Colors.red,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(Icons.delete, color: Colors.white),

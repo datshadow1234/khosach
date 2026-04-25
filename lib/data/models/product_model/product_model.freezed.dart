@@ -33,6 +33,9 @@ mixin _$ProductModel {
   double get price => throw _privateConstructorUsedError;
   String get imageUrl => throw _privateConstructorUsedError;
   String get bookLink => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _imagesFromJson)
+  List<String> get images => throw _privateConstructorUsedError; // ✅
+  String get videoUrl => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -56,7 +59,9 @@ abstract class $ProductModelCopyWith<$Res> {
       String description,
       @JsonKey(fromJson: _priceFromJson) double price,
       String imageUrl,
-      String bookLink});
+      String bookLink,
+      @JsonKey(fromJson: _imagesFromJson) List<String> images,
+      String videoUrl});
 }
 
 /// @nodoc
@@ -82,6 +87,8 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? price = null,
     Object? imageUrl = null,
     Object? bookLink = null,
+    Object? images = null,
+    Object? videoUrl = null,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -124,6 +131,14 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.bookLink
           : bookLink // ignore: cast_nullable_to_non_nullable
               as String,
+      images: null == images
+          ? _value.images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      videoUrl: null == videoUrl
+          ? _value.videoUrl
+          : videoUrl // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -146,7 +161,9 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       String description,
       @JsonKey(fromJson: _priceFromJson) double price,
       String imageUrl,
-      String bookLink});
+      String bookLink,
+      @JsonKey(fromJson: _imagesFromJson) List<String> images,
+      String videoUrl});
 }
 
 /// @nodoc
@@ -170,6 +187,8 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? price = null,
     Object? imageUrl = null,
     Object? bookLink = null,
+    Object? images = null,
+    Object? videoUrl = null,
   }) {
     return _then(_$ProductModelImpl(
       id: freezed == id
@@ -212,6 +231,14 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.bookLink
           : bookLink // ignore: cast_nullable_to_non_nullable
               as String,
+      images: null == images
+          ? _value._images
+          : images // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      videoUrl: null == videoUrl
+          ? _value.videoUrl
+          : videoUrl // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -229,7 +256,10 @@ class _$ProductModelImpl implements _ProductModel {
       this.description = '',
       @JsonKey(fromJson: _priceFromJson) this.price = 0.0,
       this.imageUrl = '',
-      this.bookLink = ''});
+      this.bookLink = '',
+      @JsonKey(fromJson: _imagesFromJson) final List<String> images = const [],
+      this.videoUrl = ''})
+      : _images = images;
 
   factory _$ProductModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductModelImplFromJson(json);
@@ -264,10 +294,23 @@ class _$ProductModelImpl implements _ProductModel {
   @override
   @JsonKey()
   final String bookLink;
+  final List<String> _images;
+  @override
+  @JsonKey(fromJson: _imagesFromJson)
+  List<String> get images {
+    if (_images is EqualUnmodifiableListView) return _images;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_images);
+  }
+
+// ✅
+  @override
+  @JsonKey()
+  final String videoUrl;
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, title: $title, category: $category, author: $author, language: $language, coutry: $coutry, description: $description, price: $price, imageUrl: $imageUrl, bookLink: $bookLink)';
+    return 'ProductModel(id: $id, title: $title, category: $category, author: $author, language: $language, coutry: $coutry, description: $description, price: $price, imageUrl: $imageUrl, bookLink: $bookLink, images: $images, videoUrl: $videoUrl)';
   }
 
   @override
@@ -289,13 +332,28 @@ class _$ProductModelImpl implements _ProductModel {
             (identical(other.imageUrl, imageUrl) ||
                 other.imageUrl == imageUrl) &&
             (identical(other.bookLink, bookLink) ||
-                other.bookLink == bookLink));
+                other.bookLink == bookLink) &&
+            const DeepCollectionEquality().equals(other._images, _images) &&
+            (identical(other.videoUrl, videoUrl) ||
+                other.videoUrl == videoUrl));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, title, category, author,
-      language, coutry, description, price, imageUrl, bookLink);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      title,
+      category,
+      author,
+      language,
+      coutry,
+      description,
+      price,
+      imageUrl,
+      bookLink,
+      const DeepCollectionEquality().hash(_images),
+      videoUrl);
 
   @JsonKey(ignore: true)
   @override
@@ -322,7 +380,9 @@ abstract class _ProductModel implements ProductModel {
       final String description,
       @JsonKey(fromJson: _priceFromJson) final double price,
       final String imageUrl,
-      final String bookLink}) = _$ProductModelImpl;
+      final String bookLink,
+      @JsonKey(fromJson: _imagesFromJson) final List<String> images,
+      final String videoUrl}) = _$ProductModelImpl;
 
   factory _ProductModel.fromJson(Map<String, dynamic> json) =
       _$ProductModelImpl.fromJson;
@@ -350,6 +410,11 @@ abstract class _ProductModel implements ProductModel {
   String get imageUrl;
   @override
   String get bookLink;
+  @override
+  @JsonKey(fromJson: _imagesFromJson)
+  List<String> get images;
+  @override // ✅
+  String get videoUrl;
   @override
   @JsonKey(ignore: true)
   _$$ProductModelImplCopyWith<_$ProductModelImpl> get copyWith =>

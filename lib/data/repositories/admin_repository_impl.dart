@@ -23,19 +23,16 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<void> updateAdminProfile(UserEntity admin, String token) async {
     try {
-      await adminDbClient.updateAdminInfo(
-        admin.uid,
-        token,
-        {
-          'name': admin.name,
-          'phone': admin.phone,
-          'address': admin.address,
-        },
-      );
+      await adminDbClient.updateAdminInfo(admin.uid, token, {
+        'name': admin.name,
+        'phone': admin.phone,
+        'address': admin.address,
+      });
     } catch (e) {
       throw Exception('Admin Update Error: $e');
     }
   }
+
   @override
   Future<List<UserEntity>> getAllUsers(String token) async {
     try {

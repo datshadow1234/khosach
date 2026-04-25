@@ -23,6 +23,8 @@ List<ProductEntity> _parseProductsIsolate(Map<String, dynamic> responseMap) {
           price: model.price,
           imageUrl: model.imageUrl,
           bookLink: model.bookLink,
+          images: model.images,
+          videoUrl: model.videoUrl,
         ),
       );
     }
@@ -69,6 +71,8 @@ class ProductRepositoryImpl implements ProductRepository {
       'price': product.price,
       'imageUrl': product.imageUrl,
       'bookLink': product.bookLink,
+      'images': product.images,
+      'videoUrl': product.videoUrl,
     };
   }
 
